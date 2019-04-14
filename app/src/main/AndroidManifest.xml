@@ -16,6 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".RedPointTreeInSimpleActivity" />
+        <activity android:name=".CrossHierarchyActivity" />
+        <activity android:name=".MessageBoxActivity" />
+        <activity android:name=".MomentMsgActivity" />
+        <activity android:name=".SystemMsgActivity" />
     </application>
 
 </manifest>

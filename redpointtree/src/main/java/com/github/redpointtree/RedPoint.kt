@@ -66,7 +66,7 @@ open class RedPoint(tid:String) {
         invalidateParent()
     }
 
-    open internal fun invalidateSelf(){
+    open fun invalidateSelf(){
         //刷新当前关联的红点view
         notifyObserver()
     }

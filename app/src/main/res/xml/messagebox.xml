@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RepointGroup
+<RedPointGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="root">
-    <Repoint
-        id="system"/>
-    <Repoint
-        id="moment"/>
-</RepointGroup>
+    <RedPoint id="system"/>
+    <RedPoint id="moment"/>
+<!--    <RedpointGroup id="personal">
+        <RedPoint id="news"/>
+        <RedPoint id="game"/>
+    </RedpointGroup>-->
+</RedPointGroup>
