@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.github.redpointtree"
+        applicationId "com.github.redpointtree.demo"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
@@ -26,6 +26,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(path: ':redpointtree')
 }
 
 apply plugin: 'kotlin-android-extensions'
