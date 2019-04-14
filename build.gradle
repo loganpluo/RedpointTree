@@ -1,27 +1,36 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
+    ext.kotlin_version = '1.2.71'
+
     repositories {
-        google()
-        jcenter()
+
+        maven{ url 'https://maven.aliyun.com/repository/google' }
+        maven{ url'https://maven.aliyun.com/repository/jcenter'}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.novoda:bintray-release:0.9'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+
     }
 }
 
 allprojects {
     repositories {
-        google()
-        jcenter()
+
+//        maven{url 'https://dl.bintray.com/loganpluo/maven/'}//暂时这样引用，审核通过之后jceneter之后就不需要了
+        maven{ url 'https://maven.aliyun.com/repository/google' }
+        maven{ url'https://maven.aliyun.com/repository/jcenter'}
     }
+
+
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+//tasks.getByPath(":xcachehttp:javadocRelease").enabled = false//必须添加这个不然Javadoc generation failed. Generated Javadoc options file (useful for troubleshooting):
