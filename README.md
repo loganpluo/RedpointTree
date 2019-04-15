@@ -62,7 +62,6 @@ android:id定义id
         android:id="@+id/root">
         <RedPoint  android:id="@id/system"/>
         <RedPoint android:id="@id/moment"/>
-        </RedpointGroup>-->
     </RedPointGroup>
 
 2、 加载xml，构建RedpointTree 和 单利管理的RedpointTree
