@@ -21,12 +21,12 @@ open class RedPointGroup(id:String) : RedPoint(id) {
             return false
         }
 
-        //删除原来的
-        val findRedPoint = findRedPointById(redPoint.getId())
-        if(findRedPoint != null){
-            LogUtil.i(tag,"addChild remove pre redpoint, redPoint.getId:${redPoint.getId()}")
-            removeChild(findRedPoint)
-        }
+//        //删除原来的
+//        val findRedPoint = findRedPointById(redPoint.getId())
+//        if(findRedPoint != null){
+//            LogUtil.i(tag,"addChild remove pre redpoint, redPoint.getId:${redPoint.getId()}")
+//            removeChild(findRedPoint)
+//        }
 
         childrenList.add(redPoint)
         childrenMap.put(redPoint.getId(),redPoint)
@@ -37,7 +37,29 @@ open class RedPointGroup(id:String) : RedPoint(id) {
 
 
     fun findRedPointById(id:String):RedPoint?{
-        return childrenMap[id]
+        //递归遍历子节点
+        return findRedPointById(id,this)
+    }
+
+    fun findRedPointById(id:String, redPoint:RedPoint):RedPoint?{
+        if(id == redPoint.getId()){
+            return redPoint
+        }
+
+        if(redPoint is RedPointGroup){
+            redPoint.childrenList.forEach {
+                if(id == it.getId()){
+                    return it
+                }else if(it is RedPointGroup){
+                    val findRedPoint = findRedPointById(id,it)
+                    if(findRedPoint != null){
+                        return findRedPoint
+                    }
+                }
+            }
+        }
+
+        return null
     }
 
     fun removeChild(redPoint: RedPoint){
