@@ -14,8 +14,8 @@ import org.xmlpull.v1.XmlPullParserException
 /**
  * Created by loganpluo on 2019/4/14.
  */
-class RepointTree(ctx: Context,@XmlRes val xml:Int) {
-    val tag = "RepointTree"
+class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
+    val tag = "RedpointTree"
     private val context:Context = ctx.applicationContext
     private var rootRedPointGroup:RedPointGroup
 

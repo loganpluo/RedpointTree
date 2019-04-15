@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_messagebox.*
 
 class MessageBoxActivity : AppCompatActivity() {
 
-    val tag = "MessageBoxActivity|RepointTree"
+    val tag = "MessageBoxActivity|RedpointTree"
 
 
 
@@ -59,7 +59,7 @@ class MessageBoxActivity : AppCompatActivity() {
 
     private fun loadMessageBoxTree(){
 
-        val repointTree = MessageBoxManager.getInstance(this).repointTree
+        val repointTree = MessageBoxManager.getInstance(this).redpointTree
         systemRedPoint = repointTree.findRedPointById("system")
 
         systemRedPoint!!.apply {

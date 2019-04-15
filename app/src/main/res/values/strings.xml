@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">RedPointTree</string>
+
+    <string name="goto_redpointtreeinsimpleactivity">gotoRedPointTreeInSimpleActivity</string>
+    <string name="goto_crosshierarchyactivity">gotoCrossHierarchyActivity</string>
+
 </resources>

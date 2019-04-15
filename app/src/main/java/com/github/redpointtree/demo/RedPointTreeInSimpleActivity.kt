@@ -6,13 +6,12 @@ import android.view.View
 import com.github.redpointtree.RedPoint
 import com.github.redpointtree.RedPointGroup
 import com.github.redpointtree.RedPointObserver
-import com.github.redpointtree.RepointTree
 import com.github.redpointtree.util.LogUtil
 import kotlinx.android.synthetic.main.activity_redpoint_tree_in_simpleactivity.*
 
 class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
-    val tag = "MainActivity|RepointTree"
+    val tag = "MainActivity|RedpointTree"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

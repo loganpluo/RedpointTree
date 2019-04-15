@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.github.redpointtree.RedPoint
-import com.github.redpointtree.RedPointGroup
 import com.github.redpointtree.RedPointObserver
-import com.github.redpointtree.RepointTree
 import kotlinx.android.synthetic.main.activity_cross_hierarchy.*
 
 class CrossHierarchyActivity : AppCompatActivity() {
 
-    val tag = "CrossHierarchyActivity|RepointTree"
+    val tag = "CrossHierarchyActivity|RedpointTree"
 
 
 
@@ -42,7 +40,7 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
     private fun loadMessageBoxTree(){
 
-        val repointTree = MessageBoxManager.getInstance(this).repointTree//RepointTree(this, R.xml.messagebox)
+        val repointTree = MessageBoxManager.getInstance(this).redpointTree//RedpointTree(this, R.xml.messagebox)
         repointTree.findRedPointById("system")!!.apply {
             setUnReadCount(12)
         }

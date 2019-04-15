@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 
 class SystemMsgActivity : AppCompatActivity() {
 
-    val tag = "SystemMsgActivity|RepointTree"
+    val tag = "SystemMsgActivity|RedpointTree"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,7 +16,7 @@ class SystemMsgActivity : AppCompatActivity() {
 
     private fun readSystemMsgs(){
 
-        val repointTree = MessageBoxManager.getInstance(this).repointTree
+        val repointTree = MessageBoxManager.getInstance(this).redpointTree
 
         repointTree.findRedPointById("system")!!.invalidate(0)
 
