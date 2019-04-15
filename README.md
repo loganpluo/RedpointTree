@@ -84,7 +84,7 @@ android:id定义id
     
 3、初始化红点树（未读数 和 关联刷新红点）（CrossHierarchyActivity）
 
-    private val rootRedPointObserver = object:RedPointObserver{
+    private val rootRedPointObserver = object:RedPointObserver{//刷新根节点的红点的观察者
         override fun notify(unReadCount: Int) {
             if(unReadCount > 0){
                 rootRedPoint.visibility = View.VISIBLE
@@ -99,11 +99,11 @@ android:id定义id
     private fun loadMessageBoxTree(){
 
         val redpointTree = MessageBoxManager.getInstance(this).redpointTree
-        redpointTree.findRedPointById(R.id.system)!!.apply {
+        redpointTree.findRedPointById(R.id.system)!!.apply {//设置系统消息数量，不需要刷新，因为没有关联红点view刷新
             setUnReadCount(12)
         }
 
-        redpointTree.findRedPointById(R.id.moment)!!.apply {
+        redpointTree.findRedPointById(R.id.moment)!!.apply {//设置动态消息数量，不需要刷新，因为没有关联红点view刷新
             setUnReadCount(1)
         }
 
@@ -117,7 +117,7 @@ android:id定义id
 
     override fun onDestroy() {
         super.onDestroy()
-        root!!.removeObserver()
+        root!!.removeObserver()//注意移除，因为红点树是单利
     }
 
 5、点击进入消息盒子（MessageBoxActivity）
@@ -167,8 +167,8 @@ android:id定义id
     override fun onDestroy() {
         super.onDestroy()
 
-        systemRedPoint!!.removeObserver()
-        momentRedPoint!!.removeObserver()
+        systemRedPoint!!.removeObserver()//注意移除，因为红点树是单利
+        momentRedPoint!!.removeObserver()//注意移除，因为红点树是单利
     }
 
 4、查看系统消息（SystemMsgActivity），清除系统消息的红点
