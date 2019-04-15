@@ -23,7 +23,6 @@ class RepointTree(ctx: Context,@XmlRes val xml:Int) {
         rootRedPointGroup = parseXml(context, xml)
     }
 
-    //todo 需要递归查找，类似findviewbyid
     fun findRedPointById(id:String):RedPoint?{
         if(id == rootRedPointGroup.getId()){
             return rootRedPointGroup
