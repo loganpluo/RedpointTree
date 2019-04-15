@@ -18,19 +18,13 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_redpoint_tree_in_simpleactivity)
 
 
-        val myGroupItem = MyGroupItem("myGroupItem")
-
-        val item = MyItem("MyItem")
-
-        LogUtil.d(tag, " GroupItem.id:${myGroupItem.getId()}, item.getId:${item.getId()}")
-
         testRedPointTreeInSimpleActivity()
 
     }
 
     private fun testRedPointTreeInSimpleActivity(){
         val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
-        val root = RedPointGroup("root")
+        val root = RedPointGroup(1)
         root.setObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
@@ -43,7 +37,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
         })
 
         val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
-        val level11 = RedPoint("level11")
+        val level11 = RedPoint(2)
         level11.setObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
@@ -62,7 +56,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
 
         val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
-        val level12 = RedPoint("level121")
+        val level12 = RedPoint(3)
         level12.setObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){

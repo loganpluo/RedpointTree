@@ -41,15 +41,15 @@ class CrossHierarchyActivity : AppCompatActivity() {
     private fun loadMessageBoxTree(){
 
         val redpointTree = MessageBoxManager.getInstance(this).redpointTree//RedpointTree(this, R.xml.messagebox)
-        redpointTree.findRedPointById("system")!!.apply {
+        redpointTree.findRedPointById(R.id.system)!!.apply {
             setUnReadCount(12)
         }
 
-        redpointTree.findRedPointById("moment")!!.apply {
+        redpointTree.findRedPointById(R.id.moment)!!.apply {
             setUnReadCount(1)
         }
 
-        root = redpointTree.findRedPointById("root")!!
+        root = redpointTree.findRedPointById(R.id.root)!!
         root!!.apply {
             setObserver(rootRedPointObserver)
         }.invalidateSelf()

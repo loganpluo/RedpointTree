@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RedPointGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="root">
-    <RedPoint id="system"/>
-    <RedPoint id="moment"/>
+    android:id="@+id/root">
+    <RedPoint  android:id="@+id/system"/>
+    <RedPoint android:id="@+id/moment"/>
 <!--    <RedpointGroup id="personal">
         <RedPoint id="news"/>
         <RedPoint id="game"/>

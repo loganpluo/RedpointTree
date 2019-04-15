@@ -5,23 +5,23 @@ package com.github.redpointtree
 /**
  * Created by loganpluo on 2019/4/14.
  */
-open class RedPoint(tid:String) {
+open class RedPoint(tid:Int) {
 
     internal var parent:RedPointGroup? = null
     private var unReadCount = 0
     private var redPointObserver:RedPointObserver? = null
 
-    private var id:String = ""
+    private var id:Int = 0
 
     init {
         setId(tid)
     }
 
-    fun setId(id:String){
+    fun setId(id:Int){
         this.id = id
     }
 
-    open fun getId():String{
+    open fun getId():Int{
         return id
     }
 

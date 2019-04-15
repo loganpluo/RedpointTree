@@ -6,17 +6,16 @@ import com.github.redpointtree.util.LogUtil
 /**
  * Created by loganpluo on 2019/4/14.
  */
-open class RedPointGroup(id:String) : RedPoint(id) {
+open class RedPointGroup(id:Int) : RedPoint(id) {
     private val tag = "RedPointGroup"
     private var childrenList = ArrayList<RedPoint>()
-    private var childrenMap = HashMap<String, RedPoint>()
 
     /**
      * add 并不会执行刷新view
      */
     fun addChild(redPoint: RedPoint):Boolean{
 
-        if(TextUtils.isEmpty(redPoint.getId())){
+        if(redPoint.getId() == 0){
             LogUtil.e(tag,"addChild fail, redPoint.getId is empty")
             return false
         }
@@ -29,19 +28,18 @@ open class RedPointGroup(id:String) : RedPoint(id) {
 //        }
 
         childrenList.add(redPoint)
-        childrenMap.put(redPoint.getId(),redPoint)
         redPoint.addParent(this)
 
         return true
     }
 
 
-    fun findRedPointById(id:String):RedPoint?{
+    fun findRedPointById(id:Int):RedPoint?{
         //递归遍历子节点
         return findRedPointById(id,this)
     }
 
-    fun findRedPointById(id:String, redPoint:RedPoint):RedPoint?{
+    fun findRedPointById(id:Int, redPoint:RedPoint):RedPoint?{
         if(id == redPoint.getId()){
             return redPoint
         }
@@ -64,7 +62,6 @@ open class RedPointGroup(id:String) : RedPoint(id) {
 
     fun removeChild(redPoint: RedPoint){
         childrenList.remove(redPoint)
-        childrenMap.remove(redPoint.getId())
         redPoint.removeFromParent()
 
     }

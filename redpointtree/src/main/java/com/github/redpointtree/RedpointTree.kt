@@ -23,7 +23,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
         rootRedPointGroup = parseXml(context, xml)
     }
 
-    fun findRedPointById(id:String):RedPoint?{
+    fun findRedPointById(id:Int):RedPoint?{
         if(id == rootRedPointGroup.getId()){
             return rootRedPointGroup
         }
@@ -36,7 +36,6 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
         val parser = context.resources.getXml(xml)
         var eventType = parser.eventType
         LogUtil.d(tag,"parseXml start eventType:$eventType")
-
 
         var root:RedPointGroup?
         try{
@@ -75,7 +74,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
             if("id" == attributeName && !TextUtils.isEmpty(attributeValue)){
-                redPointGroup = RedPointGroup(attributeValue)
+                redPointGroup = RedPointGroup(attributeValue.removePrefix("@").toInt())
             }
 //            LogUtil.d(tag,"createRedPointGroup i:$i, attributeName:$attributeName, attributeValue:$attributeValue")
 
@@ -94,7 +93,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
             if("id" == attributeName && !TextUtils.isEmpty(attributeValue)){
-                redPoint = RedPoint(attributeValue)
+                redPoint = RedPoint(attributeValue.removePrefix("@").toInt())
             }
 //            LogUtil.d(tag,"createRedPointGroup i:$i, attributeName:$attributeName, attributeValue:$attributeValue")
 
