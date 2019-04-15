@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="system"
+        android:text="click_system"
         app:layout_constraintTop_toBottomOf="@id/rootView"/>
     <View
         android:id="@+id/systemRedPointView"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="moment"
+        android:text="click_moment"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rootView"/>
     <View
