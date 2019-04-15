@@ -82,7 +82,21 @@ android:id定义id
       }
     }
     
-3、初始化红点树（未读书 和 关联刷新红点）
+3、初始化红点树（未读数 和 关联刷新红点）（CrossHierarchyActivity）
+
+    private val rootRedPointObserver = object:RedPointObserver{
+        override fun notify(unReadCount: Int) {
+            if(unReadCount > 0){
+                rootRedPoint.visibility = View.VISIBLE
+            }else{
+                rootRedPoint.visibility = View.INVISIBLE
+            }
+        }
+    }
+
+    private var root: RedPoint? = null
+
+    private fun loadMessageBoxTree(){
 
         val redpointTree = MessageBoxManager.getInstance(this).redpointTree
         redpointTree.findRedPointById(R.id.system)!!.apply {
@@ -96,11 +110,70 @@ android:id定义id
         root = redpointTree.findRedPointById(R.id.root)!!
         root!!.apply {
             setObserver(rootRedPointObserver)
-        }.invalidateSelf()
+        }.invalidateSelf()//当前activity只有显示root的红点，所以只需要刷新它自己就好
 
-4、清除叶子红点
 
-        redpointTree.findRedPointById(R.id.system)!!.invalidate(0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        root!!.removeObserver()
+    }
+
+5、点击进入消息盒子（MessageBoxActivity）
+
+    private val systemRedPointObserver = object:RedPointObserver{//系统消息的红点刷新的观察者
+        override fun notify(unReadCount: Int) {
+            if(unReadCount > 0){
+                systemRedPointView.visibility = View.VISIBLE
+            }else{
+                systemRedPointView.visibility = View.INVISIBLE
+            }
+        }
+
+    }
+
+    private val momentRedPointObserver = object:RedPointObserver{//动态消息的红点刷新的观察者
+        override fun notify(unReadCount: Int) {
+            if(unReadCount > 0){
+                momentRedPointView.visibility = View.VISIBLE
+            }else{
+                momentRedPointView.visibility = View.INVISIBLE
+            }
+        }
+
+    }
+
+    private var systemRedPoint: RedPoint? = null
+    private var momentRedPoint: RedPoint? = null
+
+    private fun loadMessageBoxTree(){
+
+        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
+        systemRedPoint = redpointTree.findRedPointById(R.id.system)
+
+        systemRedPoint!!.apply {//关联系统消息的红点刷新
+            setObserver(systemRedPointObserver)
+        }.invalidateSelf()//只需要刷新自己
+
+        momentRedPoint = redpointTree.findRedPointById(R.id.moment)!!
+        momentRedPoint!!.apply {//关联动态消息的红点刷新
+            setObserver(momentRedPointObserver)
+        }.invalidateSelf()//只需要刷新自己
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        systemRedPoint!!.removeObserver()
+        momentRedPoint!!.removeObserver()
+    }
+
+4、查看系统消息（SystemMsgActivity），清除系统消息的红点
+
+        redpointTree.findRedPointById(R.id.system)!!.invalidate(0)//刷新自己以及递归往上刷新
 
 
 
