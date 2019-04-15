@@ -16,9 +16,9 @@ class SystemMsgActivity : AppCompatActivity() {
 
     private fun readSystemMsgs(){
 
-        val repointTree = MessageBoxManager.getInstance(this).redpointTree
+        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
 
-        repointTree.findRedPointById("system")!!.invalidate(0)
+        redpointTree.findRedPointById("system")!!.invalidate(0)
 
     }
 
