@@ -2,8 +2,8 @@
 <RedPointGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root">
-    <RedPoint  android:id="@+id/system"/>
-    <RedPoint android:id="@+id/moment"/>
+    <RedPoint  android:id="@id/system"/>
+    <RedPoint android:id="@id/moment"/>
 <!--    <RedpointGroup id="personal">
         <RedPoint id="news"/>
         <RedPoint id="game"/>
