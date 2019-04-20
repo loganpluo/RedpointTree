@@ -12,20 +12,6 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
     val tag = "CrossHierarchyActivity|RedpointTree"
 
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cross_hierarchy)
-
-        rootView.setOnClickListener {
-            val intent = Intent(this@CrossHierarchyActivity,MessageBoxActivity::class.java)
-            startActivity(intent)
-        }
-
-        loadMessageBoxTree()
-    }
-
     private val rootRedPointObserver = object:RedPointObserver{
         override fun notify(unReadCount: Int) {
             if(unReadCount > 0){
@@ -38,15 +24,42 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
     private var root: RedPoint? = null
 
-    private fun loadMessageBoxTree(){
+    private var unReadMsgModel:UnReadMsgModel? = null
 
-        val redpointTree = MessageBoxManager.getInstance(this).redpointTree//RedpointTree(this, R.xml.messagebox)
-        redpointTree.findRedPointById(R.id.system)!!.apply {
-            setUnReadCount(12)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_cross_hierarchy)
+
+        rootView.setOnClickListener {
+            val intent = Intent(this@CrossHierarchyActivity,MessageBoxActivity::class.java)
+            startActivity(intent)
         }
 
-        redpointTree.findRedPointById(R.id.moment)!!.apply {
-            setUnReadCount(1)
+        unReadMsgModel = UnReadMsgModel()
+
+        unReadMsgModel?.asycRequestUnReadMsgs(object: UnReadMsgModel.UnReadMsgModelCallBack {
+            override fun result(unReadMsgResult: UnReadMsgResult) {
+                loadMessageBoxTree(unReadMsgResult)
+            }
+
+        })
+
+
+    }
+
+
+
+    private fun loadMessageBoxTree(unReadMsgResult: UnReadMsgResult){
+
+        //请求红点数量
+
+        val redpointTree = MessageBoxManager.getInstance(this).redpointTree//RedpointTree(this, R.xml.messagebox)
+        redpointTree.findRedPointById(R.id.system)?.apply {
+            setUnReadCount(unReadMsgResult.systemMsgCount)
+        }
+
+        redpointTree.findRedPointById(R.id.moment)?.apply {
+            setUnReadCount(unReadMsgResult.momentMsgCount)
         }
 
         root = redpointTree.findRedPointById(R.id.root)!!

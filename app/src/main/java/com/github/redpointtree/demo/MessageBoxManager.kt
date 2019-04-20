@@ -1,6 +1,7 @@
 package com.github.redpointtree.demo
 
 import android.content.Context
+import com.github.redpointtree.RedPointObserver
 import com.github.redpointtree.RedpointTree
 
 /**
@@ -19,6 +20,27 @@ class MessageBoxManager(context: Context) {
             }
             return instance!!
         }
+
+    }
+
+    init {
+        bindClearCacheObserver()
+    }
+
+    private fun bindClearCacheObserver(){
+        redpointTree.findRedPointById(R.id.system)?.addObserver(object:RedPointObserver{
+            override fun notify(unReadCount: Int) {
+
+            }
+
+        })
+
+        redpointTree.findRedPointById(R.id.moment)?.addObserver(object:RedPointObserver{
+            override fun notify(unReadCount: Int) {
+
+            }
+
+        })
 
     }
 

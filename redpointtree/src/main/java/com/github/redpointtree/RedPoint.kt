@@ -29,7 +29,6 @@ open class RedPoint(tid:Int) {
         return unReadCount
     }
 
-    //只给内部用，不要改成publish，用invalidate来设置unReadCount，因为只要unReadCount变动 就要触发刷新view
     open fun setUnReadCount(unReadCount:Int){
         this.unReadCount = unReadCount
     }
