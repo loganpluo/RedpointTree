@@ -63,12 +63,12 @@ class MessageBoxActivity : AppCompatActivity() {
         systemRedPoint = redpointTree.findRedPointById(R.id.system)
 
         systemRedPoint!!.apply {
-            setObserver(systemRedPointObserver)
+            addObserver(systemRedPointObserver)
         }.invalidateSelf()
 
         momentRedPoint = redpointTree.findRedPointById(R.id.moment)!!
         momentRedPoint!!.apply {
-            setObserver(momentRedPointObserver)
+            addObserver(momentRedPointObserver)
         }.invalidateSelf()
 
 
@@ -77,8 +77,8 @@ class MessageBoxActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        systemRedPoint!!.removeObserver()
-        momentRedPoint!!.removeObserver()
+        systemRedPoint!!.removeObserver(systemRedPointObserver)
+        momentRedPoint!!.removeObserver(momentRedPointObserver)
     }
 
 

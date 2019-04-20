@@ -9,7 +9,7 @@ open class RedPoint(tid:Int) {
 
     internal var parent:RedPointGroup? = null
     private var unReadCount = 0
-    private var redPointObserver:RedPointObserver? = null
+    private var redPointObservers:MutableList<RedPointObserver> = ArrayList()
 
     private var id:Int = 0
 
@@ -85,15 +85,29 @@ open class RedPoint(tid:Int) {
      * 只通知自己绑定的Observer
      */
     open protected fun notifyObserver(){
-        redPointObserver?.notify(unReadCount)
+        redPointObservers.forEach {
+            it.notify(unReadCount)
+        }
+
     }
 
-    fun setObserver(redPointObserver:RedPointObserver){
-        this.redPointObserver = redPointObserver
+    open fun addObserver(redPointObserver:RedPointObserver){
+        redPointObservers.add(redPointObserver)
     }
 
-    fun removeObserver(){
-        this.redPointObserver = null
+    open fun removeObserver(redPointObserver:RedPointObserver){
+        redPointObservers.remove(redPointObserver)
+    }
+
+    open fun removeObserver(index:Int){
+        if(redPointObservers.size > index){
+            redPointObservers.removeAt(index)
+        }
+
+    }
+
+    open fun removeAllObserver(){
+        redPointObservers.clear()
     }
 
 }

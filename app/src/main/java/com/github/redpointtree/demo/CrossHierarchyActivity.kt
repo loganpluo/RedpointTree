@@ -51,7 +51,7 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
         root = redpointTree.findRedPointById(R.id.root)!!
         root!!.apply {
-            setObserver(rootRedPointObserver)
+            addObserver(rootRedPointObserver)
         }.invalidateSelf()
 
 
@@ -59,7 +59,7 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        root!!.removeObserver()
+        root!!.removeObserver(rootRedPointObserver)
     }
 
 

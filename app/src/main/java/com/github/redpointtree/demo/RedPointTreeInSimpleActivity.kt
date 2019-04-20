@@ -6,7 +6,6 @@ import android.view.View
 import com.github.redpointtree.RedPoint
 import com.github.redpointtree.RedPointGroup
 import com.github.redpointtree.RedPointObserver
-import com.github.redpointtree.util.LogUtil
 import kotlinx.android.synthetic.main.activity_redpoint_tree_in_simpleactivity.*
 
 class RedPointTreeInSimpleActivity : AppCompatActivity() {
@@ -25,7 +24,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
     private fun testRedPointTreeInSimpleActivity(){
         val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
         val root = RedPointGroup(R.id.root)
-        root.setObserver(object: RedPointObserver {
+        root.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
                     rootRedPointView.visibility = View.VISIBLE
@@ -38,7 +37,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
         val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
         val level11 = RedPoint(R.id.system)
-        level11.setObserver(object: RedPointObserver {
+        level11.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
                     level11RedPointView.visibility = View.VISIBLE
@@ -57,7 +56,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
         val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
         val level12 = RedPoint(R.id.moment)
-        level12.setObserver(object: RedPointObserver {
+        level12.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
                     level12RedPointView.visibility = View.VISIBLE
