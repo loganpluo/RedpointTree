@@ -16,7 +16,7 @@ RedpointTree</br>
 
     val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
     val level11 = RedPoint(2)//构建叶子节点，id 是int，可以给资源id R.id.system
-    level11.setObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
+    level11.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
         override fun notify(unReadCount: Int) {
             if(unReadCount > 0){
                 level11RedPointView.visibility = View.VISIBLE
@@ -34,7 +34,7 @@ RedpointTree</br>
 
     val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
     val level12 = RedPoint(3)//构建叶子节点，id 是int，可以给资源id R.id.system
-    level12.setObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
+    level12.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
         override fun notify(unReadCount: Int) {
             if(unReadCount > 0){
                 level12RedPointView.visibility = View.VISIBLE
@@ -109,7 +109,7 @@ android:id定义id
 
         root = redpointTree.findRedPointById(R.id.root)!!
         root!!.apply {
-            setObserver(rootRedPointObserver)
+            addObserver(rootRedPointObserver)
         }.invalidateSelf()//当前activity只有显示root的红点，所以只需要刷新它自己就好
 
 
@@ -117,7 +117,7 @@ android:id定义id
 
     override fun onDestroy() {
         super.onDestroy()
-        root!!.removeObserver()//注意移除，因为红点树是单利
+        root!!.removeObserver(rootRedPointObserver)//注意移除，因为红点树是单利
     }
 
 5、点击进入消息盒子（MessageBoxActivity）
@@ -153,12 +153,12 @@ android:id定义id
         systemRedPoint = redpointTree.findRedPointById(R.id.system)
 
         systemRedPoint!!.apply {//关联系统消息的红点刷新
-            setObserver(systemRedPointObserver)
+            addObserver(systemRedPointObserver)
         }.invalidateSelf()//只需要刷新自己
 
         momentRedPoint = redpointTree.findRedPointById(R.id.moment)!!
         momentRedPoint!!.apply {//关联动态消息的红点刷新
-            setObserver(momentRedPointObserver)
+            addObserver(momentRedPointObserver)
         }.invalidateSelf()//只需要刷新自己
 
 
@@ -167,8 +167,8 @@ android:id定义id
     override fun onDestroy() {
         super.onDestroy()
 
-        systemRedPoint!!.removeObserver()//注意移除，因为红点树是单利
-        momentRedPoint!!.removeObserver()//注意移除，因为红点树是单利
+        systemRedPoint!!.removeObserver(systemRedPointObserver)//注意移除，因为红点树是单利
+        momentRedPoint!!.removeObserver(momentRedPointObserver)//注意移除，因为红点树是单利
     }
 
 4、查看系统消息（SystemMsgActivity），清除系统消息的红点
