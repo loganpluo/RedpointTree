@@ -30,7 +30,9 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
         return rootRedPointGroup.findRedPointById(id)
     }
 
-
+    fun invalidate(){
+        rootRedPointGroup?.invalidate()
+    }
 
     private fun parseXml(context: Context, xml:Int):RedPointGroup{
         val parser = context.resources.getXml(xml)
@@ -136,7 +138,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
     }
 
     fun print(){
-
+        //todo
     }
 
 }
