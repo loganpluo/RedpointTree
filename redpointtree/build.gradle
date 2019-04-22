@@ -48,7 +48,7 @@ publish{
     userOrg = 'loganpluo' // Bintray 账号名
     groupId = 'com.github.redpointtree'
     artifactId = 'redpointtree'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     desc = 'This is redpointtree for anroid'
     website = 'https://github.com/loganpluo/RedpointTree'
 }

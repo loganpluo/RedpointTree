@@ -2,6 +2,7 @@ package com.github.redpointtree.demo
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.github.redpointtree.RedPointTreeCenter
 
 class MomentMsgActivity : AppCompatActivity() {
 
@@ -16,9 +17,9 @@ class MomentMsgActivity : AppCompatActivity() {
 
     private fun readMemontMsgs(){
 
-        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
 
-        redpointTree.findRedPointById(R.id.moment)!!.invalidate(0)
+        redpointTree!!.findRedPointById(R.id.moment)!!.invalidate(0)
 
     }
 

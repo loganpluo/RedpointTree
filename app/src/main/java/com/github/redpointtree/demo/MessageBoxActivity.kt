@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.github.redpointtree.RedPoint
 import com.github.redpointtree.RedPointObserver
+import com.github.redpointtree.RedPointTreeCenter
 import kotlinx.android.synthetic.main.activity_messagebox.*
 
 class MessageBoxActivity : AppCompatActivity() {
@@ -59,8 +60,8 @@ class MessageBoxActivity : AppCompatActivity() {
 
     private fun loadMessageBoxTree(){
 
-        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
-        systemRedPoint = redpointTree.findRedPointById(R.id.system)
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
+        systemRedPoint = redpointTree!!.findRedPointById(R.id.system)
 
         systemRedPoint!!.apply {
             addObserver(systemRedPointObserver)

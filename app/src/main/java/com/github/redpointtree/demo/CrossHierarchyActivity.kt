@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.github.redpointtree.RedPoint
 import com.github.redpointtree.RedPointObserver
+import com.github.redpointtree.RedPointTreeCenter
 import kotlinx.android.synthetic.main.activity_cross_hierarchy.*
 
 class CrossHierarchyActivity : AppCompatActivity() {
@@ -53,8 +54,8 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
         //请求红点数量
 
-        val redpointTree = MessageBoxManager.getInstance(this).redpointTree//RedpointTree(this, R.xml.messagebox)
-        redpointTree.findRedPointById(R.id.system)?.apply {
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")//RedpointTree(this, R.xml.messagebox)
+        redpointTree!!.findRedPointById(R.id.system)?.apply {
             setUnReadCount(unReadMsgResult.systemMsgCount)
         }
 
