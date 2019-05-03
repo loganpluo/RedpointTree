@@ -1,6 +1,5 @@
 package com.github.redpointtree
 
-import android.text.TextUtils
 import com.github.redpointtree.util.LogUtil
 
 /**
@@ -100,7 +99,7 @@ open class RedPointGroup(id:Int) : RedPoint(id) {
         setUnReadCount(calculateUnReadCount)
 
 
-        notifyObserver()
+        notifyObservers()
     }
 
     //todo check 调用这是不是 自己，红点viewgroup的未读个数是要getTotalChildrenUnReadCount来获取的

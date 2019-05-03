@@ -1,5 +1,7 @@
 package com.github.redpointtree
 
+import android.os.Looper
+import com.github.redpointtree.util.SafeIterableMap
 
 
 /**
@@ -7,11 +9,22 @@ package com.github.redpointtree
  */
 open class RedPoint(tid:Int) {
 
+    companion object {
+        val START_VERSION = -1
+    }
+
     internal var parent:RedPointGroup? = null
     private var unReadCount = 0
-    private var redPointObservers:MutableList<RedPointObserver> = ArrayList()
+//    private var redPointObservers:MutableList<RedPointObserver> = ArrayList()
+
+    private val observers = SafeIterableMap<RedPointObserver, VersionObserver>()
 
     private var id:Int = 0
+
+    private var version = START_VERSION
+
+    private var mDispatchingValue: Boolean = false
+    private var mDispatchInvalidated: Boolean = false
 
     init {
         setId(tid)
@@ -30,7 +43,12 @@ open class RedPoint(tid:Int) {
     }
 
     open fun setUnReadCount(unReadCount:Int){
-        this.unReadCount = unReadCount
+        assertMainThread("setUnReadCount")
+        if(this.unReadCount != unReadCount){
+            this.unReadCount = unReadCount
+            version++
+        }
+
     }
 
     fun getParent():RedPointGroup?{
@@ -50,12 +68,13 @@ open class RedPoint(tid:Int) {
      */
     open fun invalidate(unReadCount:Int){
 
-        if(this.unReadCount == unReadCount){
-            return
-        }
+//        if(this.unReadCount == unReadCount){
+//            return
+//        }
+//
+//        this.unReadCount = unReadCount
 
-        this.unReadCount = unReadCount
-
+        setUnReadCount(unReadCount)
 
         invalidate()
     }
@@ -67,7 +86,7 @@ open class RedPoint(tid:Int) {
 
     open fun invalidateSelf(){
         //刷新当前关联的红点view
-        notifyObserver()
+        notifyObservers()
     }
 
     open internal fun invalidateParent(){
@@ -83,30 +102,80 @@ open class RedPoint(tid:Int) {
     /**
      * 只通知自己绑定的Observer
      */
-    open protected fun notifyObserver(){
-        redPointObservers.forEach {
-            it.notify(unReadCount)
+    open protected fun notifyObservers(){
+        assertMainThread("notifyObservers")
+//        redPointObservers.forEach {
+//            it.notify(unReadCount)
+//        }
+        //这一段是参考LiveData源码，为了防止多次调用？
+        if (mDispatchingValue) {
+            mDispatchInvalidated = true
+            return
         }
+        mDispatchingValue = true
+        do {
+            mDispatchInvalidated = false
+            val iterator = observers.iteratorWithAdditions()
+            while (iterator.hasNext()) {
+                considerNotify(iterator.next().value)
+                if (mDispatchInvalidated) {
+                    break
+                }
+            }
+        } while (mDispatchInvalidated)
+        mDispatchingValue = false
 
+    }
+
+    private fun considerNotify(observer: VersionObserver) {
+
+        if (observer.lastVersion >= version) {
+            return
+        }
+        observer.lastVersion = version
+
+
+
+        observer.redPointObserver.notify(unReadCount)
     }
 
     open fun addObserver(redPointObserver:RedPointObserver){
-        redPointObservers.add(redPointObserver)
+        val versionObserver = VersionObserver(redPointObserver)
+        val existing = observers.putIfAbsent(redPointObserver,versionObserver)
+        if(existing != null){
+            return
+        }
+//        redPointObservers.add(redPointObserver)
     }
 
     open fun removeObserver(redPointObserver:RedPointObserver){
-        redPointObservers.remove(redPointObserver)
+//        redPointObservers.remove(redPointObserver)
+        assertMainThread("removeObserver")
+        val removed = observers.remove(redPointObserver) ?: return
     }
 
-    open fun removeObserver(index:Int){
-        if(redPointObservers.size > index){
-            redPointObservers.removeAt(index)
+//    open fun removeObserver(index:Int){
+//        if(redPointObservers.size > index){
+//            redPointObservers.removeAt(index)
+//        }
+//
+//    }
+
+    open fun removeAllObserver(){
+//        redPointObservers.clear()
+
+        assertMainThread("removeObservers")
+        for (entry in observers) {
+            removeObserver(entry.key)
         }
 
     }
 
-    open fun removeAllObserver(){
-        redPointObservers.clear()
+    private fun assertMainThread(methodName: String) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw IllegalStateException("Cannot invoke RedPoint." + methodName + " on a background"
+                    + " thread")
+        }
     }
 
 }
