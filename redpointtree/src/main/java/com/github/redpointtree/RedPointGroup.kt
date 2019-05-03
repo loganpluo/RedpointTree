@@ -93,9 +93,9 @@ open class RedPointGroup(id:Int) : RedPoint(id) {
 
      override fun invalidateSelf(){
         val calculateUnReadCount = getTotalChildrenUnReadCount(this,0)
-        if(calculateUnReadCount == getUnReadCount()){
-            return
-        }
+//        if(calculateUnReadCount == getUnReadCount()){//不能加判断，因为后面有观察者加入的感知变化,后面参考livedata来做吧
+//            return
+//        }
 
         setUnReadCount(calculateUnReadCount)
 
