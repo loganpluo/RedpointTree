@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RedPoint">
-        <attr name="id" format="string" />
+        <attr name="id" format="string|reference" />
         <attr name="needCache" format="boolean" />
-        <attr name="cacheKey" format="string" />
-
     </declare-styleable>
 </resources>
