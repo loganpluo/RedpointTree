@@ -1,11 +1,12 @@
 package com.github.redpointtree
 
+import android.text.TextUtils
 import com.github.redpointtree.util.LogUtil
 
 /**
  * Created by loganpluo on 2019/4/14.
  */
-open class RedPointGroup(id:Int) : RedPoint(id) {
+open class RedPointGroup(id:String) : RedPoint(id) {
 
     private var childrenList = ArrayList<RedPoint>()
 
@@ -20,7 +21,7 @@ open class RedPointGroup(id:Int) : RedPoint(id) {
      */
     fun addChild(redPoint: RedPoint):Boolean{
 
-        if(redPoint.getId() == 0){
+        if(TextUtils.isEmpty(redPoint.getId())){
             LogUtil.e(tag,"addChild fail, redPoint.getId is empty")
             return false
         }
@@ -39,12 +40,12 @@ open class RedPointGroup(id:Int) : RedPoint(id) {
     }
 
 
-    fun findRedPointById(id:Int):RedPoint?{
+    fun findRedPointById(id:String):RedPoint?{
         //递归遍历子节点
         return findRedPointById(id,this)
     }
 
-    fun findRedPointById(id:Int, redPoint:RedPoint):RedPoint?{
+    fun findRedPointById(id:String, redPoint:RedPoint):RedPoint?{
         if(id == redPoint.getId()){
             return redPoint
         }
@@ -107,6 +108,9 @@ open class RedPointGroup(id:Int) : RedPoint(id) {
         }
     }
 
+    override fun invalidateSelf(){
+        invalidateSelf(true)
+    }
 
      override fun invalidateSelf(needWriteCache:Boolean){
         val calculateUnReadCount = getTotalChildrenUnReadCount(this,0)

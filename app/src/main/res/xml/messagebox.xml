@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <RedPointGroup
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/root">
-        <RedPoint  android:id="@id/system"/>
-        <RedPoint android:id="@id/moment"/>
+<RedPointGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:_id="root">
+        <RedPoint app:_id="system" app:needCache="true"/>
+        <RedPoint app:_id="moment" app:needCache="true"/>
     </RedPointGroup>

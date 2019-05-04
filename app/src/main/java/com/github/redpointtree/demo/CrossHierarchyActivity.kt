@@ -55,15 +55,15 @@ class CrossHierarchyActivity : AppCompatActivity() {
         //请求红点数量
 
         val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")//RedpointTree(this, R.xml.messagebox)
-        redpointTree!!.findRedPointById(R.id.system)?.apply {
+        redpointTree!!.findRedPointById("system")?.apply {
             setUnReadCount(unReadMsgResult.systemMsgCount)
         }
 
-        redpointTree.findRedPointById(R.id.moment)?.apply {
+        redpointTree.findRedPointById("moment")?.apply {
             setUnReadCount(unReadMsgResult.momentMsgCount)
         }
 
-        root = redpointTree.findRedPointById(R.id.root)!!
+        root = redpointTree.findRedPointById("root")!!
         root!!.apply {
             addObserver(rootRedPointObserver)
         }.invalidateSelf()

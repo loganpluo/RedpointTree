@@ -24,7 +24,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
         rootRedPointGroup = parseXml(context, xml, defaultLoadCache)
     }
 
-    fun findRedPointById(id:Int):RedPoint?{
+    fun findRedPointById(id:String):RedPoint?{
         if(id == rootRedPointGroup.getId()){
             return rootRedPointGroup
         }
@@ -76,8 +76,8 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
         for(i in 0 until parser.attributeCount){
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
-            if("id" == attributeName && !TextUtils.isEmpty(attributeValue)){
-                redPointGroup = RedPointGroup(attributeValue.removePrefix("@").toInt())
+            if("_id" == attributeName && !TextUtils.isEmpty(attributeValue)){
+                redPointGroup = RedPointGroup(attributeValue)
             }
 //            LogUtil.d(tag,"createRedPointGroup i:$i, attributeName:$attributeName, attributeValue:$attributeValue")
 
@@ -99,8 +99,8 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
 
-            if("id" == attributeName && !TextUtils.isEmpty(attributeValue)){
-                redPoint = RedPoint(attributeValue.removePrefix("@").toInt())
+            if("_id" == attributeName && !TextUtils.isEmpty(attributeValue)){
+                redPoint = RedPoint(attributeValue)
             }
 
             if("needCache" == attributeName){//id系统属性一定是在加载自定属性之前

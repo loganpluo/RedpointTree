@@ -9,7 +9,7 @@ import com.github.redpointtree.util.SafeIterableMap
 /**
  * Created by loganpluo on 2019/4/14.
  */
-open class RedPoint(tid:Int) {
+open class RedPoint(tid:String) {
 
     companion object {
         val START_VERSION = -1
@@ -21,7 +21,7 @@ open class RedPoint(tid:Int) {
 
     private val observers = SafeIterableMap<RedPointObserver, VersionObserver>()
 
-    private var id:Int = 0
+    private var id:String? = null
     private var cacheKey = ""
     var needCache = false
 
@@ -37,18 +37,18 @@ open class RedPoint(tid:Int) {
         setId(tid)
     }
 
-    fun setId(id:Int){
+    fun setId(id:String){
         this.id = id
     }
 
-    open fun getId():Int{
+    open fun getId():String?{
         return id
     }
 
 
 
     fun getCacheKey():String{
-        if(id == 0) return ""
+        if(TextUtils.isEmpty(id)) return ""
 
         val cacheKey = StringBuilder()
 

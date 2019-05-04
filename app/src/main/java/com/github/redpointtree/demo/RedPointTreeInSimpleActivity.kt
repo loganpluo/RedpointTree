@@ -23,7 +23,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
     private fun testRedPointTreeInSimpleActivity(){
         val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
-        val root = RedPointGroup(R.id.root)
+        val root = RedPointGroup("root")
         root.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
@@ -36,7 +36,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
         })
 
         val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
-        val level11 = RedPoint(R.id.system)
+        val level11 = RedPoint("system")
         level11.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
@@ -55,7 +55,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
 
         val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
-        val level12 = RedPoint(R.id.moment)
+        val level12 = RedPoint("moment")
         level12.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
