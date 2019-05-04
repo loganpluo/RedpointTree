@@ -1,6 +1,8 @@
 package com.github.redpointtree
 
 import android.os.Looper
+import android.text.TextUtils
+import com.github.redpointtree.util.LogUtil
 import com.github.redpointtree.util.SafeIterableMap
 
 
@@ -20,11 +22,16 @@ open class RedPoint(tid:Int) {
     private val observers = SafeIterableMap<RedPointObserver, VersionObserver>()
 
     private var id:Int = 0
+    private var cacheKey = ""
+    var needCache = false
 
     private var version = START_VERSION
 
     private var mDispatchingValue: Boolean = false
     private var mDispatchInvalidated: Boolean = false
+
+    protected open var tag = "RedPoint"
+
 
     init {
         setId(tid)
@@ -38,6 +45,24 @@ open class RedPoint(tid:Int) {
         return id
     }
 
+
+
+    fun getCacheKey():String{
+        if(id == 0) return ""
+
+        val cacheKey = StringBuilder()
+
+        val preKey = RedPointCacheConfig.redPointCachePreKey?.getRedPointCachePreKey()?:""
+        if(!TextUtils.isEmpty(preKey)){
+            cacheKey.append(preKey)
+            cacheKey.append("&")
+        }
+
+        cacheKey.append(id)
+
+        return cacheKey.toString()
+    }
+
     open fun getUnReadCount():Int{
         return unReadCount
     }
@@ -47,6 +72,7 @@ open class RedPoint(tid:Int) {
         if(this.unReadCount != unReadCount){
             this.unReadCount = unReadCount
             version++
+            LogUtil.d(tag,"id:$id, setUnReadCount($unReadCount:Int) ")
         }
 
     }
@@ -68,11 +94,9 @@ open class RedPoint(tid:Int) {
      */
     open fun invalidate(unReadCount:Int){
 
-//        if(this.unReadCount == unReadCount){
-//            return
-//        }
-//
-//        this.unReadCount = unReadCount
+        if(this.unReadCount == unReadCount){
+            return
+        }
 
         setUnReadCount(unReadCount)
 
@@ -80,33 +104,45 @@ open class RedPoint(tid:Int) {
     }
 
     open fun invalidate(){
-        invalidateSelf()
+        invalidate(true)
+    }
+
+    open fun invalidate(needWriteCache:Boolean){
+        invalidateSelf(needWriteCache)
         invalidateParent()
     }
 
     open fun invalidateSelf(){
+        invalidateSelf(true)
+    }
+
+    open fun invalidateSelf(needWriteCache:Boolean){
         //刷新当前关联的红点view
-        notifyObservers()
+        notifyObservers(needWriteCache)
     }
 
     open internal fun invalidateParent(){
-        //通知parent也更新关联的红点view
-        parent?.invalidateParent()
+        invalidateParent(true)
+    }
 
+    open internal fun invalidateParent(needWriteCache:Boolean){
+        //通知parent也更新关联的红点view
+        parent?.invalidateParent(needWriteCache)
     }
 
     open internal fun invalidateChildren(){
-        invalidateSelf()
+        invalidateChildren(true)
+    }
+
+    open internal fun invalidateChildren(needWriteCache:Boolean){
+        invalidateSelf(needWriteCache)
     }
 
     /**
      * 只通知自己绑定的Observer
      */
-    open protected fun notifyObservers(){
+    open protected fun notifyObservers(needWriteCache:Boolean){
         assertMainThread("notifyObservers")
-//        redPointObservers.forEach {
-//            it.notify(unReadCount)
-//        }
         //这一段是参考LiveData源码，为了防止多次调用？
         if (mDispatchingValue) {
             mDispatchInvalidated = true
@@ -117,7 +153,7 @@ open class RedPoint(tid:Int) {
             mDispatchInvalidated = false
             val iterator = observers.iteratorWithAdditions()
             while (iterator.hasNext()) {
-                considerNotify(iterator.next().value)
+                considerNotify(iterator.next().value, needWriteCache)
                 if (mDispatchInvalidated) {
                     break
                 }
@@ -127,15 +163,21 @@ open class RedPoint(tid:Int) {
 
     }
 
-    private fun considerNotify(observer: VersionObserver) {
+    private fun considerNotify(observer: VersionObserver,needWriteCache:Boolean) {
 
         if (observer.lastVersion >= version) {
             return
         }
+
+        //不需要写缓存,比如切换游客态的时候
+        if(!needWriteCache && (observer.redPointObserver is RedPointWriteCacheObserver)){
+            LogUtil.d(tag,"id:$id, considerNotify not  needWriteCache")
+            return
+        }
+
         observer.lastVersion = version
 
-
-
+        LogUtil.d(tag,"id:$id, considerNotify unReadCount:$unReadCount, ${observer.redPointObserver}")
         observer.redPointObserver.notify(unReadCount)
     }
 
@@ -145,7 +187,6 @@ open class RedPoint(tid:Int) {
         if(existing != null){
             return
         }
-//        redPointObservers.add(redPointObserver)
     }
 
     open fun removeObserver(redPointObserver:RedPointObserver){
@@ -154,16 +195,8 @@ open class RedPoint(tid:Int) {
         val removed = observers.remove(redPointObserver) ?: return
     }
 
-//    open fun removeObserver(index:Int){
-//        if(redPointObservers.size > index){
-//            redPointObservers.removeAt(index)
-//        }
-//
-//    }
 
     open fun removeAllObserver(){
-//        redPointObservers.clear()
-
         assertMainThread("removeObservers")
         for (entry in observers) {
             removeObserver(entry.key)

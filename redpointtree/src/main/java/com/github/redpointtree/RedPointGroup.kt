@@ -6,8 +6,14 @@ import com.github.redpointtree.util.LogUtil
  * Created by loganpluo on 2019/4/14.
  */
 open class RedPointGroup(id:Int) : RedPoint(id) {
-    private val tag = "RedPointGroup"
+
     private var childrenList = ArrayList<RedPoint>()
+
+    fun getChildren():List<RedPoint>{
+        return childrenList
+    }
+
+    override var tag: String = "RedPointGroup"
 
     /**
      * add 并不会执行刷新view
@@ -69,37 +75,45 @@ open class RedPointGroup(id:Int) : RedPoint(id) {
         throw UnSuppotOperation("RedPointGroup invalidate to up ")
     }
 
-    override fun invalidate() {
+    override fun invalidate(){
+        invalidate(true)
+    }
+
+    override fun invalidate(needWriteCache:Boolean) {
         //也刷新下子节点
-        invalidateChildren()
-        invalidateParent()
+        invalidateChildren(needWriteCache)
+        invalidateParent(needWriteCache)
     }
 
 
 
     override fun invalidateParent() {
-        invalidateSelf()
+        invalidateParent(true)
+    }
+
+    override fun invalidateParent(needWriteCache:Boolean) {
+        invalidateSelf(needWriteCache)
         //通知parent也更新关联的红点view
-        parent?.invalidateParent()
+        parent?.invalidateParent(needWriteCache)
     }
 
     override fun invalidateChildren() {
+        invalidateChildren(true)
+    }
+
+    override fun invalidateChildren(needWriteCache:Boolean) {
         childrenList.forEach {
-            it.invalidateChildren()
+            it.invalidateChildren(needWriteCache)
         }
     }
 
 
-     override fun invalidateSelf(){
+     override fun invalidateSelf(needWriteCache:Boolean){
         val calculateUnReadCount = getTotalChildrenUnReadCount(this,0)
-//        if(calculateUnReadCount == getUnReadCount()){//不能加判断，因为后面有观察者加入的感知变化,后面参考livedata来做吧
-//            return
-//        }
 
         setUnReadCount(calculateUnReadCount)
 
-
-        notifyObservers()
+        notifyObservers(needWriteCache)
     }
 
     //todo check 调用这是不是 自己，红点viewgroup的未读个数是要getTotalChildrenUnReadCount来获取的

@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.InflateException
 import android.view.ViewGroup
 import com.github.redpointtree.util.LogUtil
+import com.tencent.mmkv.MMKV
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 
@@ -14,13 +15,13 @@ import org.xmlpull.v1.XmlPullParserException
 /**
  * Created by loganpluo on 2019/4/14.
  */
-class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
+class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean = true) {
     val tag = "RedpointTree"
     private val context:Context = ctx.applicationContext
     private var rootRedPointGroup:RedPointGroup
 
     init {
-        rootRedPointGroup = parseXml(context, xml)
+        rootRedPointGroup = parseXml(context, xml, defaultLoadCache)
     }
 
     fun findRedPointById(id:Int):RedPoint?{
@@ -34,7 +35,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
         rootRedPointGroup?.invalidate()
     }
 
-    private fun parseXml(context: Context, xml:Int):RedPointGroup{
+    private fun parseXml(context: Context, xml:Int, defaultLoadCache:Boolean):RedPointGroup{
         val parser = context.resources.getXml(xml)
         var eventType = parser.eventType
         LogUtil.d(tag,"parseXml start eventType:$eventType")
@@ -55,7 +56,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
 
             root = createRedPointGroup(parser)
 
-            rInflateChildren(parser,root)
+            rInflateChildren(parser, root, defaultLoadCache)
 
 
         } catch (e: XmlPullParserException) {
@@ -89,22 +90,58 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
 
     class CreateRedPointGroupException(msg:String):Exception(msg)
 
-    private fun createRedPoint(parser:XmlPullParser):RedPoint?{
+    private fun createRedPoint(parser:XmlPullParser, defaultLoadCache:Boolean):RedPoint?{
         var redPoint:RedPoint? = null
+
+
+
         for(i in 0 until parser.attributeCount){
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
+
             if("id" == attributeName && !TextUtils.isEmpty(attributeValue)){
                 redPoint = RedPoint(attributeValue.removePrefix("@").toInt())
             }
-//            LogUtil.d(tag,"createRedPointGroup i:$i, attributeName:$attributeName, attributeValue:$attributeValue")
+
+            if("needCache" == attributeName){//id系统属性一定是在加载自定属性之前
+                val needCache = "true" == (attributeValue)
+                redPoint?.needCache = needCache
+
+                if(needCache && redPoint != null){
+
+                    var cacheUnReadCount = 0
+                    if(defaultLoadCache){
+                        val cacheKey = redPoint.getCacheKey()
+                        cacheUnReadCount = MMKV.defaultMMKV().getInt(cacheKey,0)
+
+                        redPoint.setUnReadCount(cacheUnReadCount)
+                        LogUtil.d(tag,"createRedPoint cacheKey:$cacheKey, cacheUnReadCount:$cacheUnReadCount")
+                    }
+
+                    redPoint.addObserver(object:RedPointWriteCacheObserver{
+                        var preUnReadCount = cacheUnReadCount
+                        override fun notify(unReadCount: Int) {
+
+                            val newCacheKey = redPoint.getCacheKey()
+                            if(preUnReadCount != unReadCount && !TextUtils.isEmpty(newCacheKey)){
+                                LogUtil.d(tag,"createRedPoint notify cacheKey:$newCacheKey, unReadCount:$unReadCount")
+                                MMKV.defaultMMKV().putInt(newCacheKey,unReadCount)
+                            }
+                        }
+                    })
+
+                }
+            }
+            LogUtil.d(tag,"createRedPoint attributeName:$attributeName, attributeValue:$attributeValue")
 
         }
         //todo throw
         return redPoint
     }
 
-    private fun rInflateChildren(parser:XmlPullParser, parent:RedPointGroup){
+
+
+    private fun rInflateChildren(parser:XmlPullParser, parent:RedPointGroup, defaultLoadCache:Boolean){
 
         val depth = parser.depth
         var type: Int = parser.next()
@@ -123,10 +160,10 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
                 val currentRedPoint = createRedPointGroup(parser)
                 if(currentRedPoint != null){
                     parent.addChild(currentRedPoint)
-                    rInflateChildren(parser, parent)
+                    rInflateChildren(parser, parent, defaultLoadCache)
                 }
             }else if("RedPoint" == name){
-                val currentRedPoint = createRedPoint(parser)
+                val currentRedPoint = createRedPoint(parser, defaultLoadCache)
                 if(currentRedPoint != null){
                     parent.addChild(currentRedPoint)
                 }
@@ -136,6 +173,45 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int) {
         }
 
     }
+
+    fun loadCache(){
+        loadCache(rootRedPointGroup)
+        rootRedPointGroup.invalidate(false)
+    }
+
+    private fun loadCache(redPoint:RedPoint){
+        if(redPoint is RedPointGroup){
+            redPoint.getChildren().forEach {
+                loadCache(it)
+            }
+            return
+        }
+        val cacheUnReadCount = MMKV.defaultMMKV().getInt(redPoint.getCacheKey(),0)
+        if(cacheUnReadCount != 0){
+            LogUtil.d(tag,"id:${redPoint.getId()}, loadCache cacheUnReadCount:$cacheUnReadCount")
+            redPoint.setUnReadCount(cacheUnReadCount)
+        }
+
+    }
+
+    fun clearUnReadCount(needWriteCache:Boolean){
+        setUnReadCount(rootRedPointGroup, 0)
+
+        rootRedPointGroup.invalidate(needWriteCache)
+    }
+
+    fun setUnReadCount(redPoint:RedPoint, unReadCount:Int){
+        if(redPoint is RedPointGroup){
+            redPoint.getChildren().forEach {
+                setUnReadCount(it,unReadCount)
+            }
+            return
+        }
+
+        redPoint.setUnReadCount(unReadCount)
+
+    }
+
 
     fun print(){
         //todo
