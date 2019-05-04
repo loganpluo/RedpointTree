@@ -17,7 +17,6 @@ open class RedPoint(tid:String) {
 
     internal var parent:RedPointGroup? = null
     private var unReadCount = 0
-//    private var redPointObservers:MutableList<RedPointObserver> = ArrayList()
 
     private val observers = SafeIterableMap<RedPointObserver, VersionObserver>()
 
@@ -70,7 +69,7 @@ open class RedPoint(tid:String) {
         if(this.unReadCount != unReadCount){
             this.unReadCount = unReadCount
             version++
-            LogUtil.d(tag,"id:$id, setUnReadCount($unReadCount:Int) ")
+            LogUtil.i(tag,"setUnReadCount id:$id, setUnReadCount($unReadCount:Int) ")
         }
 
     }
@@ -169,13 +168,13 @@ open class RedPoint(tid:String) {
 
         //不需要写缓存,比如切换游客态的时候
         if(!needWriteCache && (observer.redPointObserver is RedPointWriteCacheObserver)){
-            LogUtil.d(tag,"id:$id, considerNotify not  needWriteCache")
+            LogUtil.i(tag,"considerNotify id:$id,  not  needWriteCache")
             return
         }
 
         observer.lastVersion = version
 
-        LogUtil.d(tag,"id:$id, considerNotify unReadCount:$unReadCount, ${observer.redPointObserver}")
+        LogUtil.i(tag,"considerNotify id:$id, unReadCount:$unReadCount, ${observer.redPointObserver}")
         observer.redPointObserver.notify(unReadCount)
     }
 
@@ -190,7 +189,7 @@ open class RedPoint(tid:String) {
     open fun removeObserver(redPointObserver:RedPointObserver){
 //        redPointObservers.remove(redPointObserver)
         assertMainThread("removeObserver")
-        val removed = observers.remove(redPointObserver) ?: return
+        observers.remove(redPointObserver)
     }
 
 

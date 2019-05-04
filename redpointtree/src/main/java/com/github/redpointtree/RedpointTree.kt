@@ -42,8 +42,8 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
 
     private fun parseXml(context: Context, xml:Int, defaultLoadCache:Boolean):RedPointGroup{
         val parser = context.resources.getXml(xml)
-        var eventType = parser.eventType
-        LogUtil.d(tag,"parseXml start eventType:$eventType")
+//        var eventType = parser.eventType
+//        LogUtil.d(tag,"parseXml start eventType:$eventType")
 
         var root:RedPointGroup?
         try{
@@ -52,7 +52,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
             var type: Int = parser.next()
             while ((type) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
                 type = parser.next()
-                LogUtil.d(tag,"parseXml type:$type, parser.name:${parser.name}")
+//                LogUtil.d(tag,"parseXml type:$type, parser.name:${parser.name}")
             }
 
             if (type != XmlPullParser.START_TAG) {
@@ -90,6 +90,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
                     val id = typedArray.getString(i)
                     if(!TextUtils.isEmpty(id)){
                         redPointGroup = RedPointGroup(id)
+                        LogUtil.d(tag,"createRedPointGroup id:$id")
                     }
 
                 }
@@ -120,6 +121,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
                             redPoint = RedPoint(id)
                         }
                         redPoint.setId(id)
+                        LogUtil.d(tag,"createRedPoint init id:$id")
                     }
                 }
                 R.styleable.RedPoint_needCache ->{
@@ -146,7 +148,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
 
                                 val newCacheKey = redPoint.getCacheKey()
                                 if(preUnReadCount != unReadCount && !TextUtils.isEmpty(newCacheKey)){
-                                    LogUtil.d(tag,"createRedPoint id:${redPoint.getId()}, notify cacheKey:$newCacheKey, unReadCount:$unReadCount")
+                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint.getId()}, notify cacheKey:$newCacheKey, unReadCount:$unReadCount")
                                     MMKV.defaultMMKV().putInt(newCacheKey,unReadCount)
                                 }
                             }
@@ -180,14 +182,12 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
             }
 
             val name = parser.name
-            LogUtil.d(tag,"rInflateChildren name:$name, type:$type")
+//            LogUtil.d(tag,"rInflateChildren name:$name, type:$type")
             //继续递归添加
             if("RedPointGroup" == name){
                 val currentRedPoint = createRedPointGroup(attributeSet)
-                if(currentRedPoint != null){
-                    parent.addChild(currentRedPoint)
-                    rInflateChildren(parser, parent, attributeSet,defaultLoadCache)
-                }
+                parent.addChild(currentRedPoint)
+                rInflateChildren(parser, parent, attributeSet,defaultLoadCache)
             }else if("RedPoint" == name){
                 val currentRedPoint = createRedPoint(attributeSet, defaultLoadCache)
                 if(currentRedPoint != null){
@@ -201,6 +201,7 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
     }
 
     fun loadCache(){
+        LogUtil.i(tag,"loadCache")
         loadCache(rootRedPointGroup)
         rootRedPointGroup.invalidate(false)
     }
@@ -214,13 +215,14 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
         }
         val cacheUnReadCount = MMKV.defaultMMKV().getInt(redPoint.getCacheKey(),0)
         if(cacheUnReadCount != 0){
-            LogUtil.d(tag,"id:${redPoint.getId()}, loadCache cacheUnReadCount:$cacheUnReadCount")
+            LogUtil.i(tag,"id:${redPoint.getId()}, loadCache cacheUnReadCount:$cacheUnReadCount")
             redPoint.setUnReadCount(cacheUnReadCount)
         }
 
     }
 
     fun clearUnReadCount(needWriteCache:Boolean){
+        LogUtil.i(tag,"clearUnReadCount needWriteCache:$needWriteCache")
         setUnReadCount(rootRedPointGroup, 0)
 
         rootRedPointGroup.invalidate(needWriteCache)
