@@ -16,7 +16,7 @@ import android.util.Xml
 /**
  * Created by loganpluo on 2019/4/14.
  */
-class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean = true) {
+class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLoadCache:Boolean = true) {
     val tag = "RedpointTree"
     private val context:Context = ctx.applicationContext
     private var rootRedPointGroup:RedPointGroup
@@ -241,9 +241,31 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
     }
 
 
-    fun print(){
-        //todo
+    fun print(tag:String){
+        val stringBuilder = StringBuilder()
+        append(0, rootRedPointGroup, stringBuilder)
+        LogUtil.d(tag+"|"+this.tag,"redpointTreeName:$name \n $stringBuilder")
+    }
 
+    private fun append(treeLevel:Int, redPoint:RedPoint,stringBuilder:StringBuilder){
+        val preBlank = StringBuilder()
+        LogUtil.d(tag,"append treeLevel:$treeLevel")
+        for(i in 0 until treeLevel){
+            preBlank.append("   ")
+        }
+
+        stringBuilder.append(preBlank)
+
+        if(redPoint is RedPointGroup){
+            stringBuilder.append("<RedPointGroup id=${redPoint.getId()} unReadCount=${redPoint.getUnReadCount()}/>\n")
+
+            redPoint.getChildren().forEach {
+                append(treeLevel+1, it, stringBuilder)
+            }
+            return
+        }
+
+        stringBuilder.append("<RedPoint id=${redPoint.getId()} unReadCount=${redPoint.getUnReadCount()}/>\n")
 
     }
 

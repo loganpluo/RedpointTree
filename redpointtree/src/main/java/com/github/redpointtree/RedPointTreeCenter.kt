@@ -26,7 +26,7 @@ class RedPointTreeCenter private constructor() {
     }
 
     fun put(context: Context, redpointTreeName: String, @XmlRes xml:Int, defaultLoadCache:Boolean = true):RedpointTree{
-        val redpointTree = RedpointTree(context, xml, defaultLoadCache)
+        val redpointTree = RedpointTree(context, redpointTreeName, xml, defaultLoadCache)
         redPointTreeMap.put(redpointTreeName, redpointTree)
         return redpointTree
     }

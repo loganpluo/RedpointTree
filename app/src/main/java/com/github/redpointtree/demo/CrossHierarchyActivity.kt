@@ -68,7 +68,7 @@ class CrossHierarchyActivity : AppCompatActivity() {
             addObserver(rootRedPointObserver)
         }.invalidateSelf()
 
-
+        redpointTree.print(tag)
     }
 
     override fun onDestroy() {
