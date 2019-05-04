@@ -76,11 +76,10 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
         for(i in 0 until parser.attributeCount){
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
-            if("_id" == attributeName && !TextUtils.isEmpty(attributeValue)){
+            if("id" == attributeName && !TextUtils.isEmpty(attributeValue)){
                 redPointGroup = RedPointGroup(attributeValue)
             }
-//            LogUtil.d(tag,"createRedPointGroup i:$i, attributeName:$attributeName, attributeValue:$attributeValue")
-
+            LogUtil.d(tag,"createRedPointGroup i:$i, attributeName:$attributeName, attributeValue:$attributeValue")
         }
 
         if(redPointGroup != null) return redPointGroup
@@ -93,21 +92,25 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
     private fun createRedPoint(parser:XmlPullParser, defaultLoadCache:Boolean):RedPoint?{
         var redPoint:RedPoint? = null
 
-
-
         for(i in 0 until parser.attributeCount){
             val attributeName = parser.getAttributeName(i)
             val attributeValue = parser.getAttributeValue(i)
 
-            if("_id" == attributeName && !TextUtils.isEmpty(attributeValue)){
-                redPoint = RedPoint(attributeValue)
+            if("id" == attributeName && !TextUtils.isEmpty(attributeValue)){
+                if(redPoint == null){
+                    redPoint = RedPoint(attributeValue)
+                }
+                redPoint.setId(attributeValue)
             }
 
-            if("needCache" == attributeName){//id系统属性一定是在加载自定属性之前
+            if("needCache" == attributeName){
                 val needCache = "true" == (attributeValue)
-                redPoint?.needCache = needCache
 
-                if(needCache && redPoint != null){
+                if(redPoint == null){
+                    redPoint = RedPoint("")
+                }
+
+                if(needCache){
 
                     var cacheUnReadCount = 0
                     if(defaultLoadCache){
@@ -215,6 +218,9 @@ class RedpointTree(ctx: Context, @XmlRes val xml:Int, defaultLoadCache:Boolean =
 
     fun print(){
         //todo
+
+
+
     }
 
 }

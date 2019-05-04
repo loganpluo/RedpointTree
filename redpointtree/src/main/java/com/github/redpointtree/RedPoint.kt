@@ -22,8 +22,6 @@ open class RedPoint(tid:String) {
     private val observers = SafeIterableMap<RedPointObserver, VersionObserver>()
 
     private var id:String? = null
-    private var cacheKey = ""
-    var needCache = false
 
     private var version = START_VERSION
 
