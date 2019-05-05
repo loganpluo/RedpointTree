@@ -3,7 +3,7 @@ RedpointTree</br>
 一、所有红点在一个界面的场景（RedPointTreeInSimpleActivity 手动创建红点树）
 
     val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
-    val root = RedPointGroup(1)//构建非叶子节点，id 是int，可以给资源id R.id.root
+    val root = RedPointGroup("root")//构建非叶子节点，id 是string，可以给资源id R.string.root
     root.setObserver(object: RedPointObserver {//给非叶子节点添加观察者，通知红点view刷新
         override fun notify(unReadCount: Int) {
             if(unReadCount > 0){
@@ -15,7 +15,7 @@ RedpointTree</br>
     })
 
     val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
-    val level11 = RedPoint(2)//构建叶子节点，id 是int，可以给资源id R.id.system
+    val level11 = RedPoint("system")//构建叶子节点，id 是string，可以给资源id R.string.system
     level11.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
         override fun notify(unReadCount: Int) {
             if(unReadCount > 0){
@@ -33,7 +33,7 @@ RedpointTree</br>
 
 
     val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
-    val level12 = RedPoint(3)//构建叶子节点，id 是int，可以给资源id R.id.system
+    val level12 = RedPoint("moment")//构建叶子节点，id 是string，可以给资源id R.string.system
     level12.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
         override fun notify(unReadCount: Int) {
             if(unReadCount > 0){
@@ -55,32 +55,21 @@ RedpointTree</br>
 1、定义xml的红点树
 RedPointGroup非叶子节点；
 RedPoint叶子节点；
-android:id定义id
+app:id定义id, string类型
+app:needCache，是不是缓存unReadCount（用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
     
     <RedPointGroup
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/root">
-        <RedPoint  android:id="@id/system"/>
-        <RedPoint android:id="@id/moment"/>
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:id="root">
+        <RedPoint app:id="@string/system" app:needCache="true"/>
+        <RedPoint app:id="@string/moment" app:needCache="true"/>
     </RedPointGroup>
 
-2、 加载xml，构建RedpointTree 和 单利管理的RedpointTree
+2、 加载xml，构建单利RedpointTree
 
-    class MessageBoxManager(context: Context) {
+    RedPointTreeCenter.getInstance().put(this, "messagebox", R.xml.messagebox)
+    //如果需要移除则调用RedPointTreeCenter.getInstance().remove("messagebox")
 
-      val redpointTree: RedpointTree = RedpointTree(context, R.xml.messagebox)
-
-      companion object {
-          private var instance:MessageBoxManager? = null
-
-          fun getInstance(context: Context):MessageBoxManager{
-              if(instance == null){
-                  instance = MessageBoxManager(context)
-              }
-              return instance!!
-          }
-      }
-    }
     
 3、初始化红点树（未读数 和 关联刷新红点）（CrossHierarchyActivity）
 
@@ -99,15 +88,15 @@ android:id定义id
     private fun loadMessageBoxTree(){
 
         val redpointTree = MessageBoxManager.getInstance(this).redpointTree
-        redpointTree.findRedPointById(R.id.system)!!.apply {//设置系统消息数量，不需要刷新，因为没有关联红点view刷新
+        redpointTree.findRedPointById(R.string.system)!!.apply {//设置系统消息数量，不需要刷新，因为没有关联红点view刷新
             setUnReadCount(12)
         }
 
-        redpointTree.findRedPointById(R.id.moment)!!.apply {//设置动态消息数量，不需要刷新，因为没有关联红点view刷新
+        redpointTree.findRedPointById(R.string.moment)!!.apply {//设置动态消息数量，不需要刷新，因为没有关联红点view刷新
             setUnReadCount(1)
         }
 
-        root = redpointTree.findRedPointById(R.id.root)!!
+        root = redpointTree.findRedPointById("root")!!
         root!!.apply {
             addObserver(rootRedPointObserver)
         }.invalidateSelf()//当前activity只有显示root的红点，所以只需要刷新它自己就好
@@ -149,14 +138,14 @@ android:id定义id
 
     private fun loadMessageBoxTree(){
 
-        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
-        systemRedPoint = redpointTree.findRedPointById(R.id.system)
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
+        systemRedPoint = redpointTree.findRedPointById(R.string.system)
 
         systemRedPoint!!.apply {//关联系统消息的红点刷新
             addObserver(systemRedPointObserver)
         }.invalidateSelf()//只需要刷新自己
 
-        momentRedPoint = redpointTree.findRedPointById(R.id.moment)!!
+        momentRedPoint = redpointTree.findRedPointById(R.string.moment)!!
         momentRedPoint!!.apply {//关联动态消息的红点刷新
             addObserver(momentRedPointObserver)
         }.invalidateSelf()//只需要刷新自己
@@ -173,7 +162,7 @@ android:id定义id
 
 4、查看系统消息（SystemMsgActivity），清除系统消息的红点
 
-        redpointTree.findRedPointById(R.id.system)!!.invalidate(0)//刷新自己以及递归往上刷新
+        redpointTree.findRedPointById(R.string.system)!!.invalidate(0)//刷新自己以及递归往上刷新
 
 
 
