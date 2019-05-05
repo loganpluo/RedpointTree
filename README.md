@@ -55,8 +55,9 @@ RedpointTree</br>
 1、定义xml的红点树
 RedPointGroup非叶子节点；
 RedPoint叶子节点；
-app:id定义id, string类型
-app:needCache，是不是缓存unReadCount（用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
+app:id定义id, string类型,
+app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来当做key，所以app:id定义一定要唯一
+（用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
     
     <RedPointGroup
         xmlns:app="http://schemas.android.com/apk/res-auto"
