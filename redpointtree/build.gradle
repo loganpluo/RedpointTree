@@ -7,8 +7,6 @@ apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion 26
 
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 26
@@ -36,19 +34,21 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     api 'com.android.support:appcompat-v7:26.1.0'
-    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
+    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.71"
+
+    api 'com.tencent:mmkv-static:1.0.15'
 
 }
 
 
 
-
+//1.0.5 支持红点自动缓存(忘记提交了，在0a57c3e 提供打印红点树的方法)
 publish{
     userOrg = 'loganpluo' // Bintray 账号名
     groupId = 'com.github.redpointtree'
     artifactId = 'redpointtree'
-    publishVersion = '1.0.4'
+    publishVersion = '1.0.5'
     desc = 'This is redpointtree for anroid'
     website = 'https://github.com/loganpluo/RedpointTree'
 }
