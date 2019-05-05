@@ -49,7 +49,7 @@ open class RedPoint(tid:String) {
 
         val cacheKey = StringBuilder()
 
-        val preKey = RedPointCacheConfig.redPointCachePreKey?.getRedPointCachePreKey()?:""
+        val preKey = RedPointConfig.redPointCachePreKey?.getRedPointCachePreKey()?:""
         if(!TextUtils.isEmpty(preKey)){
             cacheKey.append(preKey)
             cacheKey.append("&")
@@ -187,7 +187,6 @@ open class RedPoint(tid:String) {
     }
 
     open fun removeObserver(redPointObserver:RedPointObserver){
-//        redPointObservers.remove(redPointObserver)
         assertMainThread("removeObserver")
         observers.remove(redPointObserver)
     }

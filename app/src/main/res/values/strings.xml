@@ -3,5 +3,6 @@
 
     <string name="goto_redpointtreeinsimpleactivity">gotoRedPointTreeInSimpleActivity</string>
     <string name="goto_crosshierarchyactivity">gotoCrossHierarchyActivity</string>
-
+    <string name="messagebox_system">messagebox_system</string>
+    <string name="messagebox_moment">messagebox_moment</string>
 </resources>
