@@ -106,7 +106,8 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
         root!!.apply {
             addObserver(rootRedPointObserver)
         }.invalidateSelf()//当前activity只有显示root的红点，所以只需要刷新它自己就好
-
+        
+        //如果时监听广播设置红点数量之后，调用root!!.invalidate()可以刷新整个树
 
     }
 
