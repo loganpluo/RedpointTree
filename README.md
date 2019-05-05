@@ -52,10 +52,10 @@ RedpointTree</br>
     root.invalidate() //从根节点开始刷新，通知所有节点的observer 刷新红点      
     
 二、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
-1、定义xml的红点树
-RedPointGroup非叶子节点；
-RedPoint叶子节点；
-app:id定义id, string类型,
+1、定义xml的红点树<br>
+RedPointGroup非叶子节点；<br>
+RedPoint叶子节点；<br>
+app:id定义id, string类型,<br>
 app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来当做key，所以app:id定义一定要唯一
 （用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
     
