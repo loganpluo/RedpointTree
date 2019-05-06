@@ -73,7 +73,7 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
 
 2、 加载xml，构建单利RedpointTree
 
-    RedPointTreeCenter.getInstance().put(this, "messagebox", R.xml.messagebox)
+    RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox)
     //如果需要移除则调用RedPointTreeCenter.getInstance().remove("messagebox")
 
     
@@ -145,7 +145,7 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
 
     private fun loadMessageBoxTree(){
 
-        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
         systemRedPoint = redpointTree.findRedPointById(R.string.messagebox_system)
 
         systemRedPoint!!.apply {//关联系统消息的红点刷新

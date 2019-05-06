@@ -60,7 +60,7 @@ class MessageBoxActivity : AppCompatActivity() {
 
     private fun loadMessageBoxTree(){
 
-        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
         systemRedPoint = redpointTree!!.findRedPointById(R.string.system)
 
         systemRedPoint!!.apply {

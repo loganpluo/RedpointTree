@@ -1,6 +1,7 @@
 package com.github.redpointtree
 
 import android.content.Context
+import android.support.annotation.StringRes
 import android.support.annotation.XmlRes
 //import java.util.concurrent.ConcurrentHashMap
 
@@ -23,6 +24,10 @@ class RedPointTreeCenter private constructor() {
 
     fun getRedPointTree(redpointTreeName: String):RedpointTree?{
         return redPointTreeMap[redpointTreeName]
+    }
+
+    fun put(context: Context, @StringRes redpointTreeName: Int, @XmlRes xml:Int, defaultLoadCache:Boolean = true):RedpointTree{
+        return put(context, context.getString(redpointTreeName), xml, defaultLoadCache)
     }
 
     fun put(context: Context, redpointTreeName: String, @XmlRes xml:Int, defaultLoadCache:Boolean = true):RedpointTree{

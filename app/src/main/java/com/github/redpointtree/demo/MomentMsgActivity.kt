@@ -17,7 +17,7 @@ class MomentMsgActivity : AppCompatActivity() {
 
     private fun readMemontMsgs(){
 
-        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
 
         redpointTree!!.findRedPointById(R.string.moment)!!.invalidate(0)
 

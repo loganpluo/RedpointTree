@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        RedPointTreeCenter.getInstance().put(this, "messagebox", R.xml.messagebox)
+        RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox)
 
         gotoRedPointTreeInSimpleActivity.setOnClickListener {
             val intent = Intent(this@MainActivity,RedPointTreeInSimpleActivity::class.java)

@@ -17,7 +17,7 @@ class SystemMsgActivity : AppCompatActivity() {
 
     private fun readSystemMsgs(){
 
-        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
 
         redpointTree!!.findRedPointById(R.string.system)!!.invalidate(0)
 
