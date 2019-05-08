@@ -2,25 +2,24 @@ package com.github.redpointtree
 
 import android.content.Context
 import android.support.annotation.Nullable
+import android.support.v7.widget.AppCompatTextView
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import com.github.redpointtree.util.LogUtil
 
 /**
  * Created by loganpluo on 2019/5/6.
  */
-class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : TextView(context, attrs, defStyleAttr, defStyleRes) {
+class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : AppCompatTextView (context, attrs, defStyleAttr) {
 
     private val tag = "RedPointTextView"
 
-    constructor(context: Context):this(context,null, 0, 0)
+    constructor(context: Context):this(context,null, 0)
 
-    constructor(context: Context, @Nullable attributeSet: AttributeSet):this(context, attributeSet, 0, 0)
+    constructor(context: Context, @Nullable attributeSet: AttributeSet):this(context, attributeSet, 0)
 
-    constructor(context: Context, @Nullable attributeSet: AttributeSet, defStyleAttr:Int):this(context,attributeSet, defStyleAttr, 0)
 
     private var treeName:String? = null
     private var redPointId:String? = null
@@ -29,7 +28,7 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
     init {
         if(attrs != null){
             val theme = context.theme
-            val typedArray = theme.obtainStyledAttributes(attrs, R.styleable.RedPointTextView, defStyleAttr, defStyleRes)
+            val typedArray = theme.obtainStyledAttributes(attrs, R.styleable.RedPointTextView, defStyleAttr, 0)
             val count = typedArray.indexCount
 
             for(i in 0 until count){
