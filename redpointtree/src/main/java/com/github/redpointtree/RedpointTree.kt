@@ -19,10 +19,14 @@ import android.util.Xml
 class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLoadCache:Boolean = true) {
     val tag = "RedpointTree"
     private val context:Context = ctx.applicationContext
-    private var rootRedPointGroup:RedPointGroup
+    private var rootRedPoint:RedPoint
 
     init {
-        rootRedPointGroup = parseXml(context, xml, defaultLoadCache)
+        rootRedPoint = parseXml(context, xml, defaultLoadCache)
+    }
+
+    fun getRootRedPoint():RedPoint{
+        return rootRedPoint
     }
 
     fun findRedPointById(@StringRes id:Int):RedPoint?{
@@ -30,22 +34,30 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
     }
 
     fun findRedPointById(id:String):RedPoint?{
-        if(id == rootRedPointGroup.getId()){
-            return rootRedPointGroup
+        if(id == rootRedPoint.getId()){
+            return rootRedPoint
         }
-        return rootRedPointGroup.findRedPointById(id)
+        if(rootRedPoint is RedPointGroup){
+            return (rootRedPoint as RedPointGroup).findRedPointById(id)
+        }
+
+        if(id == rootRedPoint.getId()){
+            return rootRedPoint
+        }
+
+        return null
     }
 
     fun invalidate(){
-        rootRedPointGroup?.invalidate()
+        rootRedPoint?.invalidate()
     }
 
-    private fun parseXml(context: Context, xml:Int, defaultLoadCache:Boolean):RedPointGroup{
+    private fun parseXml(context: Context, xml:Int, defaultLoadCache:Boolean):RedPoint{
         val parser = context.resources.getXml(xml)
 //        var eventType = parser.eventType
 //        LogUtil.d(tag,"parseXml start eventType:$eventType")
 
-        var root:RedPointGroup?
+        var root:RedPoint?
         try{
             val attrs = Xml.asAttributeSet(parser)
             // Look for the root node.
@@ -59,10 +71,14 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
                 throw InflateException(parser.positionDescription + ": No start tag found!")
             }
 
-            root = createRedPointGroup(attrs)
-
-            rInflateChildren(parser, root, attrs, defaultLoadCache)
-
+            if("RedPoint" == parser.name){
+                root = createRedPoint(attrs,defaultLoadCache)
+            }else if("RedPointGroup" == parser.name){
+                root = createRedPointGroup(attrs)
+                rInflateChildren(parser, root, attrs, defaultLoadCache)
+            }else{
+                throw UnSupportException("unkown tag ${parser.name}")
+            }
 
         } catch (e: XmlPullParserException) {
             throw e
@@ -202,8 +218,8 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
 
     fun loadCache(){
         LogUtil.i(tag,"loadCache")
-        loadCache(rootRedPointGroup)
-        rootRedPointGroup.invalidate(false)
+        loadCache(rootRedPoint)
+        rootRedPoint.invalidate(false)
     }
 
     private fun loadCache(redPoint:RedPoint){
@@ -223,9 +239,9 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
 
     fun clearUnReadCount(needWriteCache:Boolean){
         LogUtil.i(tag,"clearUnReadCount needWriteCache:$needWriteCache")
-        setUnReadCount(rootRedPointGroup, 0)
+        setUnReadCount(rootRedPoint, 0)
 
-        rootRedPointGroup.invalidate(needWriteCache)
+        rootRedPoint.invalidate(needWriteCache)
     }
 
     fun setUnReadCount(redPoint:RedPoint, unReadCount:Int){
@@ -243,7 +259,7 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
 
     fun print(tag:String){
         val stringBuilder = StringBuilder()
-        append(0, rootRedPointGroup, stringBuilder)
+        append(0, rootRedPoint, stringBuilder)
         LogUtil.d(tag+"|"+this.tag,"redpointTreeName:$name \n $stringBuilder")
     }
 
@@ -266,6 +282,10 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
         }
 
         stringBuilder.append("<RedPoint id=${redPoint.getId()} unReadCount=${redPoint.getUnReadCount()}/>\n")
+
+    }
+
+    class UnSupportException(val msg:String): Exception(msg) {
 
     }
 

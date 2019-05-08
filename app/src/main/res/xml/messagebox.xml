@@ -5,3 +5,9 @@
     <RedPoint app:id="@string/system" app:needCache="true"/>
     <RedPoint app:id="@string/moment" app:needCache="true"/>
 </RedPointGroup>
+
+<!--<RedPoint
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:id="root"
+    app:needCache="true">
+</RedPoint>-->
