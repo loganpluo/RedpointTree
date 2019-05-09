@@ -17,7 +17,7 @@ import android.util.Xml
  * Created by loganpluo on 2019/4/14.
  */
 class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLoadCache:Boolean = true) {
-    val tag = "RedpointTree"
+    val tag = "RedPointTree"
     private val context:Context = ctx.applicationContext
     private var rootRedPoint:RedPoint
 
@@ -149,7 +149,7 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
 
                     if(needCache){
 
-                        var cacheUnReadCount = 0
+                        var cacheUnReadCount = -1//默认必须是-1，这样RedPointWriteCacheObserver中 在defaultLoadCache为false的时候，可以写入0
                         if(defaultLoadCache){
                             val cacheKey = redPoint.getCacheKey()
                             cacheUnReadCount = MMKV.defaultMMKV().getInt(cacheKey,0)
@@ -159,13 +159,17 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
                         }
 
                         redPoint.addObserver(object:RedPointWriteCacheObserver{
+                            //case1:defaultLoadCache为true，preUnReadCount能防止首次刷新写重复的缓存值;
+                            //case2:defaultLoadCache为false，默认值必须是-1，这样设置0能成功
                             var preUnReadCount = cacheUnReadCount
                             override fun notify(unReadCount: Int) {
 
                                 val newCacheKey = redPoint.getCacheKey()
                                 if(preUnReadCount != unReadCount && !TextUtils.isEmpty(newCacheKey)){
-                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint.getId()}, notify cacheKey:$newCacheKey, unReadCount:$unReadCount")
+                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint.getId()}, notify success cacheKey:$newCacheKey, unReadCount:$unReadCount")
                                     MMKV.defaultMMKV().putInt(newCacheKey,unReadCount)
+                                }else{
+                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint.getId()}, notify no need cacheKey:$newCacheKey, unReadCount:$unReadCount, preUnReadCount:$preUnReadCount")
                                 }
                             }
                         })
