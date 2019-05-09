@@ -46,11 +46,12 @@ dependencies {
 //1.0.5 支持红点自动缓存(忘记提交了，在0a57c3e 提供打印红点树的方法)
 //1.0.6 提供日志配置
 //1.0.7 xml支持跟节点是redpoint
+//1.0.8 写缓存的bug
 publish{
     userOrg = 'loganpluo' // Bintray 账号名
     groupId = 'com.github.redpointtree'
     artifactId = 'redpointtree'
-    publishVersion = '1.0.7'
+    publishVersion = '1.0.8'
     desc = 'This is redpointtree for anroid'
     website = 'https://github.com/loganpluo/RedpointTree'
 }
