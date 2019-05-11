@@ -23,7 +23,7 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
 
     private var treeName:String? = null
     private var redPointId:String? = null
-    private var redPointStyle = 0 //0（默认是显示个数），1：显示红点
+    private var redPointStyle = RedPointStyle.UNREAD_COUNT //0（默认是显示个数），1：显示红点
 
     init {
         if(attrs != null){
@@ -43,7 +43,12 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
                         LogUtil.d(tag,"redPointId:$redPointId")
                     }
                     R.styleable.RedPointView_redPointStyle -> {
-                        redPointStyle = typedArray.getInteger(i,0)
+                        val redPointStyleValue = typedArray.getInteger(i,0)
+                        RedPointStyle.values().forEach {
+                            if(it.ordinal == redPointStyleValue){
+                                redPointStyle = it
+                            }
+                        }
                     }
                 }
             }
@@ -52,16 +57,20 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
 
     private val redPointObserver = object: RedPointObserver {
         override fun notify(unReadCount: Int) {
-            visibility = if(unReadCount > 0){
-                text = if(redPointStyle == 0){
-                    unReadCount.toString()
-                }else{
-                    ""
-                }
-                View.VISIBLE
+            notifyView(unReadCount, redPointStyle)
+        }
+    }
+
+    open fun notifyView(unReadCount: Int, redPointStyle:RedPointStyle){
+        visibility = if(unReadCount > 0){
+            text = if(redPointStyle == RedPointStyle.UNREAD_COUNT){
+                unReadCount.toString()
             }else{
-                View.INVISIBLE
+                ""
             }
+            View.VISIBLE
+        }else{
+            View.INVISIBLE
         }
     }
 
@@ -90,7 +99,7 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
         val root = redpointTree?.findRedPointById(redPointId!!)
         root?.apply {
             removeObserver(redPointObserver)
-        }        
+        }
     }
 
 }
