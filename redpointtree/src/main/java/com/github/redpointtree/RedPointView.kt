@@ -2,28 +2,24 @@ package com.github.redpointtree
 
 import android.content.Context
 import android.support.annotation.Nullable
-import android.support.v7.widget.AppCompatTextView
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import com.github.redpointtree.util.LogUtil
 
 /**
- * Created by loganpluo on 2019/5/6.
+ * Created by loganpluo on 2019/5/11.
  */
-class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : AppCompatTextView (context, attrs, defStyleAttr) {
+abstract class RedPointView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View (context, attrs, defStyleAttr) {
 
-    private val tag = "RedPointTextView"
+    private var treeName:String? = null
+    private var redPointId:String? = null
+    private var redPointStyle = RedPointStyle.UNREAD_COUNT //0（默认是显示个数），1：显示红点
+    private val tag = "RedPointView"
 
     constructor(context: Context):this(context,null, 0)
 
     constructor(context: Context, @Nullable attributeSet: AttributeSet):this(context, attributeSet, 0)
-
-
-    private var treeName:String? = null
-    private var redPointId:String? = null
-    private var redPointStyle = 0 //0（默认是显示个数），1：显示红点
 
     init {
         if(attrs != null){
@@ -43,7 +39,12 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
                         LogUtil.d(tag,"redPointId:$redPointId")
                     }
                     R.styleable.RedPointView_redPointStyle -> {
-                        redPointStyle = typedArray.getInteger(i,0)
+                        val redPointStyleValue = typedArray.getInteger(i,0)
+                        RedPointStyle.values().forEach {
+                            if(it.ordinal == redPointStyleValue){
+                                redPointStyle = it
+                            }
+                        }
                     }
                 }
             }
@@ -52,22 +53,16 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
 
     private val redPointObserver = object: RedPointObserver {
         override fun notify(unReadCount: Int) {
-            visibility = if(unReadCount > 0){
-                text = if(redPointStyle == 0){
-                    unReadCount.toString()
-                }else{
-                    ""
-                }
-                View.VISIBLE
-            }else{
-                View.INVISIBLE
-            }
+            LogUtil.i(tag,"notifyView unReadCount:$unReadCount, redPointStyle:$redPointStyle")
+            notifyView(unReadCount, redPointStyle)
         }
     }
 
+    abstract fun notifyView(unReadCount: Int, redPointStyle:RedPointStyle)
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(tag,"onAttachedToWindow ")
+        LogUtil.d(tag,"onAttachedToWindow ")
         if(TextUtils.isEmpty(treeName) || TextUtils.isEmpty(redPointId)){
             LogUtil.w(tag,"onAttachedToWindow treeName is empty or redPointId is empty, add redPointObserver failed")
             return
@@ -76,12 +71,13 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
         val root = redpointTree?.findRedPointById(redPointId!!)
         root?.apply {
             addObserver(redPointObserver)
+            LogUtil.d(tag,"onAttachedToWindow addObserver:$redPointObserver, and invalidateSelf")
         }?.invalidateSelf()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Log.d(tag,"onDetachedFromWindow ")
+        LogUtil.d(tag,"onDetachedFromWindow ")
         if(TextUtils.isEmpty(treeName) || TextUtils.isEmpty(redPointId)){
             LogUtil.w(tag,"onDetachedFromWindow treeName is empty or redPointId is empty, remove redPointObserver failed")
             return
@@ -90,7 +86,8 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
         val root = redpointTree?.findRedPointById(redPointId!!)
         root?.apply {
             removeObserver(redPointObserver)
-        }        
+            LogUtil.d(tag,"onDetachedFromWindow removeObserver:$redPointObserver")
+        }
     }
 
 }

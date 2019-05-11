@@ -5,7 +5,7 @@
         <attr name="needCache" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="RedPointTextView">
+    <declare-styleable name="RedPointView">
         <attr name="redPointTreeName" format="string|reference" />
         <attr name="redPointId" format="string|reference" />
         <attr name="redPointStyle" format="enum" >
