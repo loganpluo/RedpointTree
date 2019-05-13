@@ -35,15 +35,15 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
                 val styledAttr = typedArray.getIndex(i)
                 when(styledAttr){
                     R.styleable.RedPointView_redPointTreeName -> {
-                        treeName = typedArray.getString(i)
+                        treeName = typedArray.getString(styledAttr)
                         LogUtil.d(tag,"treeName:$treeName")
                     }
                     R.styleable.RedPointView_redPointId -> {
-                        redPointId = typedArray.getString(i)
+                        redPointId = typedArray.getString(styledAttr)
                         LogUtil.d(tag,"redPointId:$redPointId")
                     }
                     R.styleable.RedPointView_redPointStyle -> {
-                        val redPointStyleValue = typedArray.getInteger(i,0)
+                        val redPointStyleValue = typedArray.getInteger(styledAttr,0)
                         RedPointStyle.values().forEach {
                             if(it.ordinal == redPointStyleValue){
                                 redPointStyle = it
@@ -76,29 +76,31 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.d(tag,"onAttachedToWindow ")
+        LogUtil.d(tag,"onAttachedToWindow ")
         if(TextUtils.isEmpty(treeName) || TextUtils.isEmpty(redPointId)){
-            LogUtil.w(tag,"onAttachedToWindow treeName is empty or redPointId is empty, add redPointObserver failed")
+            LogUtil.w(tag,"onAttachedToWindow treeName($treeName) is empty or redPointId($redPointId) is empty, add redPointObserver failed")
             return
         }
         val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(treeName!!)
         val root = redpointTree?.findRedPointById(redPointId!!)
         root?.apply {
             addObserver(redPointObserver)
+            LogUtil.d(tag,"onAttachedToWindow addObserver:$redPointObserver, and invalidateSelf")
         }?.invalidateSelf()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Log.d(tag,"onDetachedFromWindow ")
+        LogUtil.d(tag,"onDetachedFromWindow ")
         if(TextUtils.isEmpty(treeName) || TextUtils.isEmpty(redPointId)){
-            LogUtil.w(tag,"onDetachedFromWindow treeName is empty or redPointId is empty, remove redPointObserver failed")
+            LogUtil.w(tag,"onDetachedFromWindow treeName($treeName) is empty or redPointId($redPointId) is empty, remove redPointObserver failed")
             return
         }
         val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(treeName!!)
         val root = redpointTree?.findRedPointById(redPointId!!)
         root?.apply {
             removeObserver(redPointObserver)
+            LogUtil.d(tag,"onDetachedFromWindow removeObserver:$redPointObserver")
         }
     }
 

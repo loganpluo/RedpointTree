@@ -21,6 +21,9 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
     private val context:Context = ctx.applicationContext
     private var rootRedPoint:RedPoint
 
+    private val redPointClearIntentMap = HashMap<String,RedPoint>()
+    private val redPointClearUrlMap = HashMap<String,RedPoint>()
+
     init {
         rootRedPoint = parseXml(context, xml, defaultLoadCache)
     }
@@ -99,21 +102,22 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
         val typedArray = theme.obtainStyledAttributes(attributeSet, R.styleable.RedPoint, 0, 0)
         val count = typedArray.indexCount
 
-        for(i in 0 until count){
-            val styledAttr = typedArray.getIndex(i)
-            when(styledAttr){
-                R.styleable.RedPoint_id -> {
-                    val id = typedArray.getString(i)
-                    if(!TextUtils.isEmpty(id)){
-                        redPointGroup = RedPointGroup(id)
-                        LogUtil.d(tag,"createRedPointGroup id:$id")
+        (0 until count)
+                .map { typedArray.getIndex(it) }
+                .forEach {
+                    when(it){
+                        R.styleable.RedPoint_id -> {
+                            val id = typedArray.getString(it)
+                            if(!TextUtils.isEmpty(id)){
+                                redPointGroup = RedPointGroup(id)
+                                LogUtil.d(tag,"createRedPointGroup id:$id")
+                            }
+
+                        }
                     }
-
                 }
-            }
-        }
 
-        if(redPointGroup != null) return redPointGroup
+        if(redPointGroup != null) return redPointGroup!!
 
         throw CreateRedPointGroupException("createRedPointGroup failed, id is empty")
     }
@@ -131,17 +135,18 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
             val styledAttr = typedArray.getIndex(i)
             when(styledAttr){
                 R.styleable.RedPoint_id -> {
-                    val id = typedArray.getString(i)
+                    val id = typedArray.getString(styledAttr)
                     if(!TextUtils.isEmpty(id)){
                         if(redPoint == null){
                             redPoint = RedPoint(id)
+                        }else{
+                            redPoint.setId(id)
                         }
-                        redPoint.setId(id)
                         LogUtil.d(tag,"createRedPoint init id:$id")
                     }
                 }
                 R.styleable.RedPoint_needCache ->{
-                    val needCache = typedArray.getBoolean(i,false)
+                    val needCache = typedArray.getBoolean(styledAttr,false)
 
                     if(redPoint == null){
                         redPoint = RedPoint("")
@@ -164,12 +169,12 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
                             var preUnReadCount = cacheUnReadCount
                             override fun notify(unReadCount: Int) {
 
-                                val newCacheKey = redPoint.getCacheKey()
+                                val newCacheKey = redPoint!!.getCacheKey()
                                 if(preUnReadCount != unReadCount && !TextUtils.isEmpty(newCacheKey)){
-                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint.getId()}, notify success cacheKey:$newCacheKey, unReadCount:$unReadCount")
+                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint!!.getId()}, notify success cacheKey:$newCacheKey, unReadCount:$unReadCount")
                                     MMKV.defaultMMKV().putInt(newCacheKey,unReadCount)
                                 }else{
-                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint.getId()}, notify no need cacheKey:$newCacheKey, unReadCount:$unReadCount, preUnReadCount:$preUnReadCount")
+                                    LogUtil.i(tag,"createRedPoint RedPointWriteCacheObserver id:${redPoint!!.getId()}, notify no need cacheKey:$newCacheKey, unReadCount:$unReadCount, preUnReadCount:$preUnReadCount")
                                 }
                             }
                         })
@@ -177,6 +182,26 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
                     }
 
                 }
+
+                R.styleable.RedPoint_clearIntent->{
+                    val clearIntent = typedArray.getString(styledAttr)
+                    if(!TextUtils.isEmpty(clearIntent)){
+                        if(redPoint == null){
+                            redPoint = RedPoint("")
+                        }
+                        redPointClearIntentMap.put(clearIntent,redPoint)
+                    }
+                }
+                R.styleable.RedPoint_clearUrl->{
+                    val clearIntent = typedArray.getString(styledAttr)
+                    if(!TextUtils.isEmpty(clearIntent)){
+                        if(redPoint == null){
+                            redPoint = RedPoint("")
+                        }
+                        redPointClearUrlMap.put(clearIntent,redPoint)
+                    }
+                }
+
             }
         }
 
@@ -289,8 +314,14 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
 
     }
 
-    class UnSupportException(val msg:String): Exception(msg) {
-
+    fun clearByIntent(clearIntent:String){
+        redPointClearIntentMap[clearIntent]?.invalidate(0)
     }
+
+    fun clearByUrl(clearUrl:String){
+        redPointClearUrlMap[clearUrl]?.invalidate(0)
+    }
+
+    class UnSupportException(val msg:String): Exception(msg)
 
 }

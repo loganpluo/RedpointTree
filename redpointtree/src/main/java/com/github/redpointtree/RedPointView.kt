@@ -27,27 +27,29 @@ abstract class RedPointView(context: Context, attrs: AttributeSet?, defStyleAttr
             val typedArray = theme.obtainStyledAttributes(attrs, R.styleable.RedPointView, defStyleAttr, 0)
             val count = typedArray.indexCount
 
-            for(i in 0 until count){
-                val styledAttr = typedArray.getIndex(i)
-                when(styledAttr){
-                    R.styleable.RedPointView_redPointTreeName -> {
-                        treeName = typedArray.getString(i)
-                        LogUtil.d(tag,"treeName:$treeName")
-                    }
-                    R.styleable.RedPointView_redPointId -> {
-                        redPointId = typedArray.getString(i)
-                        LogUtil.d(tag,"redPointId:$redPointId")
-                    }
-                    R.styleable.RedPointView_redPointStyle -> {
-                        val redPointStyleValue = typedArray.getInteger(i,0)
-                        RedPointStyle.values().forEach {
-                            if(it.ordinal == redPointStyleValue){
-                                redPointStyle = it
+            (0 until count)
+                    .asSequence()
+                    .map { typedArray.getIndex(it) }
+                    .forEach { styledAttr ->
+                        when(styledAttr){
+                            R.styleable.RedPointView_redPointTreeName -> {
+                                treeName = typedArray.getString(styledAttr)
+                                LogUtil.d(tag,"treeName:$treeName")
+                            }
+                            R.styleable.RedPointView_redPointId -> {
+                                redPointId = typedArray.getString(styledAttr)
+                                LogUtil.d(tag,"redPointId:$redPointId")
+                            }
+                            R.styleable.RedPointView_redPointStyle -> {
+                                val redPointStyleValue = typedArray.getInteger(styledAttr,0)
+                                RedPointStyle.values().forEach {
+                                    if(it.ordinal == redPointStyleValue){
+                                        redPointStyle = it
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
         }
     }
 
@@ -64,7 +66,7 @@ abstract class RedPointView(context: Context, attrs: AttributeSet?, defStyleAttr
         super.onAttachedToWindow()
         LogUtil.d(tag,"onAttachedToWindow ")
         if(TextUtils.isEmpty(treeName) || TextUtils.isEmpty(redPointId)){
-            LogUtil.w(tag,"onAttachedToWindow treeName is empty or redPointId is empty, add redPointObserver failed")
+            LogUtil.w(tag,"onAttachedToWindow treeName($treeName) is empty or redPointId($redPointId) is empty, add redPointObserver failed")
             return
         }
         val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(treeName!!)
@@ -79,7 +81,7 @@ abstract class RedPointView(context: Context, attrs: AttributeSet?, defStyleAttr
         super.onDetachedFromWindow()
         LogUtil.d(tag,"onDetachedFromWindow ")
         if(TextUtils.isEmpty(treeName) || TextUtils.isEmpty(redPointId)){
-            LogUtil.w(tag,"onDetachedFromWindow treeName is empty or redPointId is empty, remove redPointObserver failed")
+            LogUtil.w(tag,"onDetachedFromWindow treeName($treeName) is empty or redPointId($redPointId) is empty, remove redPointObserver failed")
             return
         }
         val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(treeName!!)
