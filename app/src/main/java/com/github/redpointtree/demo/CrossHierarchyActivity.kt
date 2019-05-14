@@ -14,16 +14,6 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
     val tag = "CrossHierarchyActivity|RedpointTree"
 
-//    private val rootRedPointObserver = object:RedPointObserver{
-//        override fun notify(unReadCount: Int) {
-//            if(unReadCount > 0){
-//                rootRedPoint.visibility = View.VISIBLE
-//            }else{
-//                rootRedPoint.visibility = View.INVISIBLE
-//            }
-//        }
-//    }
-
     private var root: RedPoint? = null
 
     private var unReadMsgModel:UnReadMsgModel? = null
@@ -55,19 +45,19 @@ class CrossHierarchyActivity : AppCompatActivity() {
 
         //请求红点数量
 
-        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))//RedpointTree(this, R.xml.messagebox)
-        root = redpointTree?.findRedPointById("root")
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
+        root = redpointTree?.findRedPointById(R.string.messagebox_root)
 
 
 
         if(root !is RedPointGroup){
             root?.setUnReadCount(1)
         }else{
-            redpointTree!!.findRedPointById(R.string.system)?.apply {
+            redpointTree!!.findRedPointById(R.string.messagebox_system)?.apply {
                 setUnReadCount(unReadMsgResult.systemMsgCount)
             }
 
-            redpointTree.findRedPointById(R.string.moment)?.apply {
+            redpointTree.findRedPointById(R.string.messagebox_moment)?.apply {
                 setUnReadCount(unReadMsgResult.momentMsgCount)
             }
         }
@@ -76,10 +66,7 @@ class CrossHierarchyActivity : AppCompatActivity() {
         redpointTree?.print(tag)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-//        root!!.removeObserver(rootRedPointObserver)
-    }
+
 
 
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RedPointGroup
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:id="root">
-    <RedPoint app:id="@string/system" app:needCache="true"/>
-    <RedPoint app:id="@string/moment" app:needCache="true"/>
+    app:id="@string/messagebox_root">
+    <RedPoint app:id="@string/messagebox_system" app:needCache="true"/>
+    <RedPoint app:id="@string/messagebox_moment" app:needCache="true"/>
 </RedPointGroup>
 
 <!--<RedPoint
