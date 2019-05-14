@@ -79,16 +79,29 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
     
 3、初始化红点树（未读数 和 关联刷新红点）（CrossHierarchyActivity）
 
-    private val rootRedPointObserver = object:RedPointObserver{//刷新根节点的红点的观察者
-        override fun notify(unReadCount: Int) {
-            if(unReadCount > 0){
-                rootRedPoint.visibility = View.VISIBLE
-            }else{
-                rootRedPoint.visibility = View.INVISIBLE
-            }
-        }
-    }
-
+    3.1 activity_cross_hierarchy.xml 
+    使用能自定义关联红点树中的节点的 RedPointTextView(onAttachedToWindow 和 onDetachedFromWindow 自动关联红点树的节点)
+    app:redPointTreeName指定 红点树的名字；
+    app:redPointId 指定节点id
+    app:redPointStyle 红点样式(红点或者未读数量)
+    如果app里面使用自定义view，可以继承RedPointView 来自动绑定观察红点数量
+    
+    <com.github.redpointtree.RedPointTextView
+        android:id="@+id/rootRedPoint"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toTopOf="@id/rootView"
+        app:layout_constraintRight_toRightOf="@id/rootView"
+        app:redPointTreeName="@string/messagebox_tree"
+        app:redPointId="@string/messagebox_root"
+        app:redPointStyle="point"
+        android:textColor="@android:color/white"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        tools:text="22"
+        android:background="@drawable/red_point"/>
+    
+    3.2 设置红点未读数量
     private var root: RedPoint? = null
 
     private fun loadMessageBoxTree(){
@@ -111,65 +124,75 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        root!!.removeObserver(rootRedPointObserver)//注意移除，因为红点树是单利
-    }
 
 5、点击进入消息盒子（MessageBoxActivity）
 
-    private val systemRedPointObserver = object:RedPointObserver{//系统消息的红点刷新的观察者
-        override fun notify(unReadCount: Int) {
-            if(unReadCount > 0){
-                systemRedPointView.visibility = View.VISIBLE
-            }else{
-                systemRedPointView.visibility = View.INVISIBLE
-            }
-        }
+    activity_messagebox.xml 使用自定义RedPointTextView自动关联红点节点
+    <?xml version="1.0" encoding="utf-8"?>
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:padding="10dp">
 
-    }
+        <TextView
+            android:id="@+id/systemRedPointText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="click_system"
+            app:layout_constraintTop_toBottomOf="@id/rootView"/>
 
-    private val momentRedPointObserver = object:RedPointObserver{//动态消息的红点刷新的观察者
-        override fun notify(unReadCount: Int) {
-            if(unReadCount > 0){
-                momentRedPointView.visibility = View.VISIBLE
-            }else{
-                momentRedPointView.visibility = View.INVISIBLE
-            }
-        }
+        <com.github.redpointtree.RedPointTextView
+            android:id="@+id/systemRedPointView"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            app:layout_constraintTop_toTopOf="@id/systemRedPointText"
+            app:layout_constraintRight_toRightOf="@id/systemRedPointText"
+            app:redPointTreeName="@string/messagebox_tree"
+            app:redPointId="@string/messagebox_system"
+            app:redPointStyle="point"
+            android:textColor="@android:color/white"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:background="@drawable/red_point"/>
 
-    }
-
-    private var systemRedPoint: RedPoint? = null
-    private var momentRedPoint: RedPoint? = null
-
-    private fun loadMessageBoxTree(){
-
-        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
-        systemRedPoint = redpointTree.findRedPointById(R.string.messagebox_system)
-
-        systemRedPoint!!.apply {//关联系统消息的红点刷新
-            addObserver(systemRedPointObserver)
-        }.invalidateSelf()//只需要刷新自己
-
-        momentRedPoint = redpointTree.findRedPointById(R.string.messagebox_moment)!!
-        momentRedPoint!!.apply {//关联动态消息的红点刷新
-            addObserver(momentRedPointObserver)
-        }.invalidateSelf()//只需要刷新自己
+        <TextView
+            android:id="@+id/momentRedPointText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="click_moment"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rootView"/>
 
 
-    }
+        <com.github.redpointtree.RedPointTextView
+            android:id="@+id/momentRedPointView"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            app:layout_constraintTop_toTopOf="@id/momentRedPointText"
+            app:layout_constraintRight_toRightOf="@id/momentRedPointText"
+            app:redPointTreeName="@string/messagebox_tree"
+            app:redPointId="@string/messagebox_moment"
+            app:redPointStyle="point"
+            android:textColor="@android:color/white"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            android:background="@drawable/red_point"/>
 
-    override fun onDestroy() {
-        super.onDestroy()
+    </android.support.constraint.ConstraintLayout>
 
-        systemRedPoint!!.removeObserver(systemRedPointObserver)//注意移除，因为红点树是单利
-        momentRedPoint!!.removeObserver(momentRedPointObserver)//注意移除，因为红点树是单利
-    }
+
 
 4、查看系统消息（SystemMsgActivity），清除系统消息的红点
 
-        redpointTree.findRedPointById(R.string.messagebox_system)!!.invalidate(0)//刷新自己以及递归往上刷新
+       val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
+
+       redpointTree!!.findRedPointById(R.string.messagebox_system)!!.invalidate(0)
+       //通常还需要拉去消息列表第一页成功后，invalidate(0) (防止用户停留在这个页面，下拉刷新)
+
 
 
 
