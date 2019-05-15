@@ -232,7 +232,7 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
             if("RedPointGroup" == name){
                 val currentRedPoint = createRedPointGroup(attributeSet)
                 parent.addChild(currentRedPoint)
-                rInflateChildren(parser, parent, attributeSet,defaultLoadCache)
+                rInflateChildren(parser, currentRedPoint, attributeSet,defaultLoadCache)
             }else if("RedPoint" == name){
                 val currentRedPoint = createRedPoint(attributeSet, defaultLoadCache)
                 if(currentRedPoint != null){

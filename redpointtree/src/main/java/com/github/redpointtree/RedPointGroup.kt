@@ -93,7 +93,10 @@ open class RedPointGroup(id:String) : RedPoint(id) {
     }
 
     override fun invalidateParent(needWriteCache:Boolean) {
+        //todo 如果直接从group节点调用invalidate()则 存在invalidateSelf被调用两次(invalidateParent中一次,invalidateChildren一次)
+        //不过notifyObservers中有count是否变动的判断，不会造成observer重复被通知
         invalidateSelf(needWriteCache)
+
         //通知parent也更新关联的红点view
         parent?.invalidateParent(needWriteCache)
     }
@@ -103,6 +106,10 @@ open class RedPointGroup(id:String) : RedPoint(id) {
     }
 
     override fun invalidateChildren(needWriteCache:Boolean) {
+        //todo 如果直接从group节点调用invalidate()则 存在invalidateSelf被调用两次(invalidateParent中一次,invalidateChildren一次)
+        //不过notifyObservers中有count是否变动的判断，不会造成observer重复被通知
+        invalidateSelf(needWriteCache)
+
         childrenList.forEach {
             it.invalidateChildren(needWriteCache)
         }
@@ -130,7 +137,7 @@ open class RedPointGroup(id:String) : RedPoint(id) {
         var totalUnReadCountCopy = totalUnReadCount
         if(redPoint is RedPointGroup){//如果是父亲节点，则继续遍历
 
-            childrenList.forEach {
+            redPoint.childrenList.forEach {
                 totalUnReadCountCopy += getTotalChildrenUnReadCount(it,totalUnReadCountCopy)
             }
 
