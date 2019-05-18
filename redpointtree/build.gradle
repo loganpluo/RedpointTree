@@ -49,11 +49,13 @@ dependencies {
 //1.0.8 写缓存的bug
 //1.0.9 支持自动view绑定红点观察者
 //1.0.10 读取属性的bug
+//1.0.11 扩展RedPointGroup的bug
+//1.0.12 提供协议rsp 自动映射到红点并且刷新；清除红点协议自动绑定节点； 红点支持多个clearintent配置
 publish{
     userOrg = 'loganpluo' // Bintray 账号名
     groupId = 'com.github.redpointtree'
     artifactId = 'redpointtree'
-    publishVersion = '1.0.10'
+    publishVersion = '1.0.12'
     desc = 'This is redpointtree for anroid'
     website = 'https://github.com/loganpluo/RedpointTree'
 }
