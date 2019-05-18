@@ -11,6 +11,12 @@ object ParseRedPointAnnotaionUtil {
 
     private val tag = "ParseRedPointAnnotaionUtil"
 
+    /**
+     * 根据协议的rsp 更新红点数量
+     * (1)是否更新红点协议；
+     * (2)是读取字段对应redpointtreeid 和 redpointid， 设置未读数量
+     * (3)刷新叶子节点 或者 整个树
+     */
     fun invalidate(rsp: Any){
         try{
 
@@ -71,6 +77,32 @@ object ParseRedPointAnnotaionUtil {
         }
 
 
+
+    }
+
+    /**
+     * request 通常是消息列表第一页成功之后 清除红点
+     */
+    fun clear(request:Any){
+        //request是不是清除红点的协议, 是否第一页
+        if(request !is ClearRedPointRequest || !request.isFirstPage) return
+
+        if( !(request.javaClass.isAnnotationPresent(BindRedPoint::class.java))){
+            return
+        }
+
+        //获取绑定的节点
+        val treeName =
+                request.javaClass.getAnnotation(BindRedPoint::class.java).treeName
+
+        val redPointId =
+                request.javaClass.getAnnotation(BindRedPoint::class.java).redPointId
+
+        LogUtil.i(tag,"clear request($request) treeName:$treeName, redPointId:$redPointId")
+
+        //清除红点
+        RedPointTreeCenter.getInstance().getRedPointTree(treeName)?.
+                findRedPointById(redPointId)?.invalidate(0)
 
     }
 

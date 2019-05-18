@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Created by loganpluo on 2019/5/18.
+ * ParseRedPointAnnotaionUtil 会解析 RedPointCountRsp,来刷新红点树
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
