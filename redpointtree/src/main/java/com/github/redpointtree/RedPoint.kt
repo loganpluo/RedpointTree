@@ -207,4 +207,9 @@ open class RedPoint(tid:String) {
         }
     }
 
+    override fun toString(): String {
+        return "RedPoint(unReadCount=$unReadCount, id=$id)"
+    }
+
+
 }

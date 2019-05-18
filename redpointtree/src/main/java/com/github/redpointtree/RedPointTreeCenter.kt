@@ -40,6 +40,10 @@ class RedPointTreeCenter private constructor() {
         redPointTreeMap.remove(redpointTreeName)
     }
 
-
+    fun clearByIntent(clearIntent:String){
+        redPointTreeMap.forEach {
+            it.value.clearByIntent(clearIntent)
+        }
+    }
 
 }

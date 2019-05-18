@@ -189,16 +189,21 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
                         if(redPoint == null){
                             redPoint = RedPoint("")
                         }
-                        redPointClearIntentMap.put(clearIntent,redPoint)
+                        clearIntent.split(",").forEach {
+                            redPointClearIntentMap.put(it, redPoint!!)
+                        }
                     }
                 }
                 R.styleable.RedPoint_clearUrl->{
-                    val clearIntent = typedArray.getString(styledAttr)
-                    if(!TextUtils.isEmpty(clearIntent)){
+                    val clearUrl = typedArray.getString(styledAttr)
+                    if(!TextUtils.isEmpty(clearUrl)){
                         if(redPoint == null){
                             redPoint = RedPoint("")
                         }
-                        redPointClearUrlMap.put(clearIntent,redPoint)
+                        clearUrl.split(",").forEach {
+                            redPointClearUrlMap.put(it,redPoint)
+                        }
+
                     }
                 }
 
@@ -315,7 +320,12 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
     }
 
     fun clearByIntent(clearIntent:String){
-        redPointClearIntentMap[clearIntent]?.invalidate(0)
+        val redPoint = redPointClearIntentMap[clearIntent]
+        if(redPoint != null){
+            LogUtil.d(tag,"clearByIntent $clearIntent, $redPoint")
+            redPoint.invalidate(0)
+        }
+
     }
 
     fun clearByUrl(clearUrl:String){
