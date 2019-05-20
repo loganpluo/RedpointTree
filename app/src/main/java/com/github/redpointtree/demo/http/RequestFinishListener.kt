@@ -5,6 +5,6 @@ package com.github.redpointtree.demo.http
  */
 interface RequestFinishListener {
 
-    fun onSuccess(param:Any, response:Any)
+    fun onSuccess(url:String, param:Any, response:Any)
 
 }

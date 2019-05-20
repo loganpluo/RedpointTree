@@ -15,7 +15,8 @@ class MomentMsgListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_moment_msg)
 
-        HttpUtils.request(MomentMsgListRequest(), object:HttpRspCallBack<MomentMsgListRsp>{
+        //意思下
+        HttpUtils.request("http://MomentMsgListRequest", MomentMsgListRequest(), object:HttpRspCallBack<MomentMsgListRsp>{
             override fun onSuccess(response: MomentMsgListRsp) {
                 //do 刷新列表的
             }

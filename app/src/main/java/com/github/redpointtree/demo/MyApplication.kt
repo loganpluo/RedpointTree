@@ -54,7 +54,8 @@ class MyApplication: Application() {
         }
 
         HttpUtils.requestFinishListener = object:RequestFinishListener{
-            override fun onSuccess(param: Any, response: Any) {
+            override fun onSuccess(url:String, param: Any, response: Any) {
+                RedPointTreeCenter.getInstance().clearByUrl(url)
                 ParseRedPointAnnotaionUtil.clear(param)
                 ParseRedPointAnnotaionUtil.invalidate(response)
             }

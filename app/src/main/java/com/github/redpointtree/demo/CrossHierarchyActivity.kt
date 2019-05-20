@@ -23,7 +23,8 @@ class CrossHierarchyActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        HttpUtils.request(MessageBoxUnReadCountRequest(), object:HttpRspCallBack<MessageBoxUnReadCountRsp>{
+        //意思下
+        HttpUtils.request("http://MessageBoxUnReadCountRequest", MessageBoxUnReadCountRequest(), object:HttpRspCallBack<MessageBoxUnReadCountRsp>{
 
             override fun onFail(code: Int, msg: String) {
 

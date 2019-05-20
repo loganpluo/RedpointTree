@@ -15,7 +15,8 @@ class SystemMsgActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_system_msg)
 
-        HttpUtils.request(SystemMsgListRequest(), object: HttpRspCallBack<SystemMsgListRsp> {
+        //意思下
+        HttpUtils.request("http://SystemMsgListRequest", SystemMsgListRequest(), object: HttpRspCallBack<SystemMsgListRsp> {
             override fun onSuccess(response: SystemMsgListRsp) {
                 //do 刷新列表的
             }

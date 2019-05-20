@@ -11,7 +11,7 @@ object HttpUtils {
     var requestFinishListener:RequestFinishListener? = null
 
     inline
-    fun <reified T> request(param:Any, callback:HttpRspCallBack<T>){
+    fun <reified T> request(url:String, param:Any, callback:HttpRspCallBack<T>){
 
         //示意下
         //do 异步请求
@@ -27,7 +27,7 @@ object HttpUtils {
         }
 
         callback.onSuccess(rsp!!)
-        requestFinishListener?.onSuccess(param, rsp as Any)
+        requestFinishListener?.onSuccess(url, param, rsp as Any)
 
     }
 
