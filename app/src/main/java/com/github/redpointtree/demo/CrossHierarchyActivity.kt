@@ -3,11 +3,6 @@ package com.github.redpointtree.demo
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import com.github.redpointtree.RedPoint
-import com.github.redpointtree.RedPointGroup
-import com.github.redpointtree.RedPointObserver
-import com.github.redpointtree.RedPointTreeCenter
 import com.github.redpointtree.demo.http.HttpRspCallBack
 import com.github.redpointtree.demo.http.HttpUtils
 import com.github.redpointtree.demo.http.test.MessageBoxUnReadCountRequest
