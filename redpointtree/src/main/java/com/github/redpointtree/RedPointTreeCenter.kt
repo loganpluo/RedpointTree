@@ -46,4 +46,10 @@ class RedPointTreeCenter private constructor() {
         }
     }
 
+    fun clearByUrl(clearByUrl:String){
+        redPointTreeMap.forEach {
+            it.value.clearByUrl(clearByUrl)
+        }
+    }
+
 }
