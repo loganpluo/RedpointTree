@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">RedPointTree</string>
+    <string name="app_page_scheme">redpointtree</string>
     <string name="messagebox_tree">messagebox</string>
     <string name="goto_redpointtreeinsimpleactivity">gotoRedPointTreeInSimpleActivity</string>
     <string name="goto_crosshierarchyactivity">gotoCrossHierarchyActivity</string>
+    <string name="messagebox_my">messagebox_my</string>
     <string name="messagebox_root">root</string>
     <string name="messagebox_system">messagebox_system</string>
     <string name="messagebox_moment">messagebox_moment</string>

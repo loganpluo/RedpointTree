@@ -8,15 +8,16 @@ import com.github.redpointtree.RedPoint
 import com.github.redpointtree.RedPointGroup
 import com.github.redpointtree.RedPointObserver
 import com.github.redpointtree.RedPointTreeCenter
+import com.github.redpointtree.demo.http.HttpRspCallBack
+import com.github.redpointtree.demo.http.HttpUtils
+import com.github.redpointtree.demo.http.test.MessageBoxUnReadCountRequest
+import com.github.redpointtree.demo.http.test.MessageBoxUnReadCountRsp
 import kotlinx.android.synthetic.main.activity_cross_hierarchy.*
 
 class CrossHierarchyActivity : AppCompatActivity() {
 
     val tag = "CrossHierarchyActivity|RedpointTree"
 
-    private var root: RedPoint? = null
-
-    private var unReadMsgModel:UnReadMsgModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,46 +28,19 @@ class CrossHierarchyActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        unReadMsgModel = UnReadMsgModel()
+        HttpUtils.request(MessageBoxUnReadCountRequest(), object:HttpRspCallBack<MessageBoxUnReadCountRsp>{
 
-        unReadMsgModel?.asycRequestUnReadMsgs(object: UnReadMsgModel.UnReadMsgModelCallBack {
-            override fun result(unReadMsgResult: UnReadMsgResult) {
-                loadMessageBoxTree(unReadMsgResult)
+            override fun onFail(code: Int, msg: String) {
+
+            }
+
+            override fun onSuccess(response: MessageBoxUnReadCountRsp) {
+                //MessageBoxUnReadCountRsp注解绑定了节点 会自动更新，不用代码更新了
             }
 
         })
 
-
     }
-
-
-
-    private fun loadMessageBoxTree(unReadMsgResult: UnReadMsgResult){
-
-        //请求红点数量
-
-        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
-        root = redpointTree?.findRedPointById(R.string.messagebox_root)
-
-
-
-        if(root !is RedPointGroup){
-            root?.setUnReadCount(1)
-        }else{
-            redpointTree!!.findRedPointById(R.string.messagebox_system)?.apply {
-                setUnReadCount(unReadMsgResult.systemMsgCount)
-            }
-
-            redpointTree.findRedPointById(R.string.messagebox_moment)?.apply {
-                setUnReadCount(unReadMsgResult.momentMsgCount)
-            }
-        }
-        root?.invalidateSelf()
-
-        redpointTree?.print(tag)
-    }
-
-
 
 
 }

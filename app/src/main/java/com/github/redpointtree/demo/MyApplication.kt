@@ -3,6 +3,10 @@ package com.github.redpointtree.demo
 import android.app.Application
 import android.util.Log
 import com.github.redpointtree.RedPointConfig
+import com.github.redpointtree.RedPointTreeCenter
+import com.github.redpointtree.annotation.ParseRedPointAnnotaionUtil
+import com.github.redpointtree.demo.http.HttpUtils
+import com.github.redpointtree.demo.http.RequestFinishListener
 import com.tencent.mmkv.MMKV
 
 /**
@@ -38,6 +42,21 @@ class MyApplication: Application() {
         RedPointConfig.redPointCachePreKey = object:RedPointConfig.IRedPointCachePreKey{
             override fun getRedPointCachePreKey(): String {
                 return "1"
+            }
+
+        }
+
+        RouteUtils.routeListener = object:RouteUtils.RouteListener{
+            override fun dispatch(intent: String) {
+                RedPointTreeCenter.getInstance().clearByIntent(intent)
+            }
+
+        }
+
+        HttpUtils.requestFinishListener = object:RequestFinishListener{
+            override fun onSuccess(param: Any, response: Any) {
+                ParseRedPointAnnotaionUtil.clear(param)
+                ParseRedPointAnnotaionUtil.invalidate(response)
             }
 
         }

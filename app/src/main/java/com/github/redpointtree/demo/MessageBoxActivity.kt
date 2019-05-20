@@ -29,13 +29,11 @@ class MessageBoxActivity : AppCompatActivity() {
 
 
         systemRedPointText.setOnClickListener {
-            val intent = Intent(this@MessageBoxActivity,SystemMsgActivity::class.java)
-            startActivity(intent)
+            RouteUtils.dispatch(this,"${getString(R.string.app_page_scheme)}://system_msglist")
         }
 
         momentRedPointText.setOnClickListener {
-            val intent = Intent(this@MessageBoxActivity,MomentMsgActivity::class.java)
-            startActivity(intent)
+            RouteUtils.dispatch(this,"${getString(R.string.app_page_scheme)}://moment_msglist")
         }
 
     }
