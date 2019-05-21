@@ -6,10 +6,11 @@ RedpointTree</br>
 1、红点树构建<br>
 
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-create_tree.png)<br>
-<div align=center>构建流程图</div>
+<div align=center>######构建流程图</div>
 
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/2-%E5%88%B7%E6%96%B0.png)
-<center>红点树刷新流程图</center>
+<div align=center>######红点树刷新流程图</div>
+
 
 
 代码实现
