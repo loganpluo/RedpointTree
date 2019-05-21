@@ -6,6 +6,7 @@ RedpointTree</br>
 1、红点树构建<br>
 
 ![这里随便写文字](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-create_tree.png)<br>
+<center>这一行需要居中</center>
                                         < center>构建流程图< /center>
 
 ![这里随便写文字](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/2-%E5%88%B7%E6%96%B0.png)<br>
