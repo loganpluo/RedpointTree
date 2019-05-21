@@ -6,10 +6,10 @@ RedpointTree</br>
 1、红点树构建<br>
 
 ![这里随便写文字](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-create_tree.png)<br>
-                                        构建流程
+                                        < center>构建流程图< /center>
 
 ![这里随便写文字](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/2-%E5%88%B7%E6%96%B0.png)<br>
-                                     红点树刷新流程
+                                     < /center>红点树刷新流程图< /center>
 
 代码实现
 (1)定义xml的红点树<br>
