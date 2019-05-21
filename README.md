@@ -1,20 +1,20 @@
 # RedpointTree
 RedpointTree</br>
-前言</br>
+## 前言</br>
 
-一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
-1、红点树构建<br>
+## 一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
+### 1、红点树构建<br>
 
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-create_tree.png)<br>
-<div align=center>######构建流程图</div>
+<div align=center>构建流程图</div>
 
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/2-%E5%88%B7%E6%96%B0.png)
-<div align=center>######红点树刷新流程图</div>
+<div align=center>红点树刷新流程图</div>
 
 
 
-代码实现
-(1)定义xml的红点树<br>
+#### 代码实现<br>
+#### (1)定义xml的红点树<br>
 
     messagebox.xml
     <RedPointGroup
@@ -34,12 +34,11 @@ app:id定义id, string类型,<br>
 app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来当做key，所以app:id定义一定要唯一
 （用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
     
-（2) 加载xml，构建单利RedpointTree
+#### （2) 加载xml，构建单利RedpointTree
 
     RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox)
     //如果需要移除则调用RedPointTreeCenter.getInstance().remove("messagebox")
 
-    
 3、初始化红点树（未读数 和 关联刷新红点）（CrossHierarchyActivity）
 
     3.1 activity_cross_hierarchy.xml 
