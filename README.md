@@ -1,58 +1,16 @@
 # RedpointTree
 RedpointTree</br>
-一、所有红点在一个界面的场景（RedPointTreeInSimpleActivity 手动创建红点树）
+前言</br>
 
-    val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
-    val root = RedPointGroup("messagebox_root")//构建非叶子节点，id 是string，尽量给唯一值，可以给资源id R.string.messagebox_root
-    root.setObserver(object: RedPointObserver {//给非叶子节点添加观察者，通知红点view刷新
-        override fun notify(unReadCount: Int) {
-            if(unReadCount > 0){
-                rootRedPointView.visibility = View.VISIBLE
-            }else{
-                rootRedPointView.visibility = View.INVISIBLE
-            }
-        }
-    })
+一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
+1、红点树构建
+流程图
+![这里随便写文字](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-%E6%9E%84%E5%BB%BA%E7%BA%A2%E7%82%B9%E6%A0%91.png)
 
-    val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
-    val level11 = RedPoint("messagebox_system")//构建叶子节点，id 是string，尽量给唯一值，可以给资源id R.string.messagebox_system
-    level11.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
-        override fun notify(unReadCount: Int) {
-            if(unReadCount > 0){
-                level11RedPointView.visibility = View.VISIBLE
-            }else{
-                level11RedPointView.visibility = View.INVISIBLE
-            }
-        }
-    })
-    level1_1_text.setOnClickListener {//点击叶子节点关联的红点view，清除叶子节点的红点
-        level11.invalidate(0)
-    }
-    level11.setUnReadCount(2)//设置叶子节点的未读数量
-    root.addChild(level11)//添加到父节点上
-
-
-    val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
-    val level12 = RedPoint("messagebox_moment")//构建叶子节点，id 是string，尽量给唯一值，可以给资源id R.string.messagebox_moment
-    level12.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
-        override fun notify(unReadCount: Int) {
-            if(unReadCount > 0){
-                level12RedPointView.visibility = View.VISIBLE
-            }else{
-                level12RedPointView.visibility = View.INVISIBLE
-            }
-        }
-    })
-    level1_2_text.setOnClickListener {//点击叶子节点关联的红点view，清除叶子节点的红点
-        level12.invalidate(0)
-    }
-    level12.setUnReadCount(4)//设置叶子节点的未读数量
-    root.addChild(level12)//添加到父节点上
-
-    root.invalidate() //从根节点开始刷新，通知所有节点的observer 刷新红点      
-    
-二、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
 1、定义xml的红点树<br>
+
+
+
 RedPointGroup非叶子节点；<br>
 RedPoint叶子节点；<br>
 app:id定义id, string类型,<br>
@@ -192,6 +150,59 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
 
        redpointTree!!.findRedPointById(R.string.messagebox_system)!!.invalidate(0)
        //通常还需要拉去消息列表第一页成功后，invalidate(0) (防止用户停留在这个页面，下拉刷新)
+
+
+二、所有红点在一个界面的场景（RedPointTreeInSimpleActivity 手动创建红点树）
+
+    val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
+    val root = RedPointGroup("messagebox_root")//构建非叶子节点，id 是string，尽量给唯一值，可以给资源id R.string.messagebox_root
+    root.setObserver(object: RedPointObserver {//给非叶子节点添加观察者，通知红点view刷新
+        override fun notify(unReadCount: Int) {
+            if(unReadCount > 0){
+                rootRedPointView.visibility = View.VISIBLE
+            }else{
+                rootRedPointView.visibility = View.INVISIBLE
+            }
+        }
+    })
+
+    val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
+    val level11 = RedPoint("messagebox_system")//构建叶子节点，id 是string，尽量给唯一值，可以给资源id R.string.messagebox_system
+    level11.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
+        override fun notify(unReadCount: Int) {
+            if(unReadCount > 0){
+                level11RedPointView.visibility = View.VISIBLE
+            }else{
+                level11RedPointView.visibility = View.INVISIBLE
+            }
+        }
+    })
+    level1_1_text.setOnClickListener {//点击叶子节点关联的红点view，清除叶子节点的红点
+        level11.invalidate(0)
+    }
+    level11.setUnReadCount(2)//设置叶子节点的未读数量
+    root.addChild(level11)//添加到父节点上
+
+
+    val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
+    val level12 = RedPoint("messagebox_moment")//构建叶子节点，id 是string，尽量给唯一值，可以给资源id R.string.messagebox_moment
+    level12.addObserver(object: RedPointObserver {//给叶子节点添加观察者，通知红点view刷新
+        override fun notify(unReadCount: Int) {
+            if(unReadCount > 0){
+                level12RedPointView.visibility = View.VISIBLE
+            }else{
+                level12RedPointView.visibility = View.INVISIBLE
+            }
+        }
+    })
+    level1_2_text.setOnClickListener {//点击叶子节点关联的红点view，清除叶子节点的红点
+        level12.invalidate(0)
+    }
+    level12.setUnReadCount(4)//设置叶子节点的未读数量
+    root.addChild(level12)//添加到父节点上
+
+    root.invalidate() //从根节点开始刷新，通知所有节点的observer 刷新红点      
+    
 
 
 
