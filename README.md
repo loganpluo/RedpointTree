@@ -5,10 +5,10 @@ RedpointTree</br>
 一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
 1、红点树构建<br>
 
-![这里随便写文字](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-create_tree.png)
-<center>构建流程图</center>
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-create_tree.png)<br>
+<div align=center>构建流程图</div>
 
-![这里随便写文字](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/2-%E5%88%B7%E6%96%B0.png)
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/2-%E5%88%B7%E6%96%B0.png)
 <center>红点树刷新流程图</center>
 
 
