@@ -6,7 +6,13 @@ RedpointTree</br>
 &emsp;&emsp;&emsp;&emsp;&emsp;CrossHierarchyActivity效果图<br><br>
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/0_RedPointTreeInSimpleActivity.gif)<br>
 &emsp;&emsp;&emsp;RedPointTreeInSimpleActivity 效果图
+<br><br>
 
+### RedpointTree的优势:<br>
+* xml定义红点树，扩展红点方便,无需更改刷新逻辑，尤其是扩展RedPointGroup虚拟父亲节点（后面 1、红点树构建）
+* 提供自定义红点RedPointTextView/RedPointView，它们能自动关联xml的红点，便于自动更新view(后面 2、RedpointView自动关联红点树的节点)
+* 支持叶子红点自动缓存未读数量，断网情况下体验良好(后面 3、红点叶子节点支持缓存配置)
+* 配置化设置红点数量 和清除红点 (后面 4、5、6)
 
 ## 一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
 ### 1、红点树构建<br>
@@ -45,7 +51,7 @@ RedpointTree</br>
     RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox)
     //如果需要移除则调用RedPointTreeCenter.getInstance().remove("messagebox")
 
-### 2、Redpointview自动关联红点树的节点
+### 2、RedpointView自动关联红点树的节点
 
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/3-auto_bind_RedPointTextView.png)<br>
 <div align=center>自动关联红点流程图</div>
@@ -78,7 +84,7 @@ RedpointTree</br>
     * 扩展: 如果是app红点view是自定义的view，自定义view可以继承RedPointView，也可以实现来自动绑定观察红点数量<br>
 
 
-### 3、红点叶子节点支持缓存配置
+### 3、红点叶子节点支持缓存配置(断网下能显示红点数量)
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/4-needCache_mmkv.png)<br>
 <div align=center>叶子节点缓存流程</div>
 
