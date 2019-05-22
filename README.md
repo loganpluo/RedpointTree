@@ -6,8 +6,8 @@ RedpointTree</br>
 ### 1、红点树构建<br>
 
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/1-create_tree.png)<br>
-<div align=center>构建流程图</div>
-
+<div align=center>红点树构建流程图</div>
+    <br><br>
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/2-%E5%88%B7%E6%96%B0.png)
 <div align=center>红点树刷新流程图</div>
 
@@ -16,7 +16,7 @@ RedpointTree</br>
 #### 代码实现<br>
 #### (1)定义xml的红点树<br>
 
-    messagebox.xml
+    <!-- messagebox.xml -->
     <RedPointGroup
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:id="messagebox_root">
@@ -24,16 +24,15 @@ RedpointTree</br>
         <RedPoint app:id="@string/messagebox_moment" app:needCache="true"/>
     </RedPointGroup>
 
-    strings.xml（id定义）
+    <!--strings.xml（id定义）-->
     <string name="messagebox_system">messagebox_system</string>
     <string name="messagebox_moment">messagebox_moment</string>
 
-代码说明：
-    RedPointGroup非叶子节点；<br>
-    RedPoint叶子节点；<br>
-    app:id定义id, string类型,<br>
-    app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来当做key，所以app:id定义一定要唯一
-    （用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
+代码说明：<br>
+    * RedPointGroup非叶子节点；<br>
+    * RedPoint叶子节点；<br>
+    * app:id定义id, string类型,<br>
+    * app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来当做key，所以app:id定义一定要唯一（用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
     
 #### (2)加载xml，构建单利RedpointTree
 
@@ -62,16 +61,15 @@ RedpointTree</br>
         tools:text="22"
         android:background="@drawable/red_point"/>
 
-自定义属性说明：
-    app:redPointTreeName指定 红点树的名字；
-    app:redPointId 指定节点id
-    app:redPointStyle 红点样式(红点或者未读数量)
+自定义属性说明：<br>
+    * app:redPointTreeName 指定 红点树的名字；<br>
+    * app:redPointId  指定节点id<br>
+    * app:redPointStyle 红点样式(红点或者未读数量)<br>
 
-流程过程说明：
-    onAttachedToWindow 自动创建观察者，绑定到对应红点树的节点；
-    onDetachedFromWindow 自动移除观察者
-扩展:
-     如果是app红点view是自定义的view，自定义view可以继承RedPointView，也可以实现来自动绑定观察红点数量
+流程过程说明：<br>
+    * onAttachedToWindow 自动创建观察者，绑定到对应红点树的节点；
+    * onDetachedFromWindow 自动移除观察者
+    * 扩展: 如果是app红点view是自定义的view，自定义view可以继承RedPointView，也可以实现来自动绑定观察红点数量
 
 
 ### 3、红点叶子节点支持缓存配置
@@ -95,8 +93,8 @@ RedpointTree</br>
 
 
 代码说明：
-    缓存的key = getRedPointCachePreKey() + "&" + RedPoint.id
-    所以RedPoint的app:id一定要定义全局唯一(当然如果后面有需要，可以再追加treeName)
+    * 缓存的key = getRedPointCachePreKey() + "&" + RedPoint.id
+    * 所以RedPoint的app:id一定要定义全局唯一(当然如果后面有需要，可以再追加treeName)
 
 
 ### 4、跳转消息列表，清除对应红点
