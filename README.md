@@ -67,9 +67,9 @@ RedpointTree</br>
     * app:redPointStyle 红点样式(红点或者未读数量)<br>
 
 流程过程说明：<br>
-    * onAttachedToWindow 自动创建观察者，绑定到对应红点树的节点；
-    * onDetachedFromWindow 自动移除观察者
-    * 扩展: 如果是app红点view是自定义的view，自定义view可以继承RedPointView，也可以实现来自动绑定观察红点数量
+    * onAttachedToWindow 自动创建观察者，绑定到对应红点树的节点；<br>
+    * onDetachedFromWindow 自动移除观察者<br>
+    * 扩展: 如果是app红点view是自定义的view，自定义view可以继承RedPointView，也可以实现来自动绑定观察红点数量<br>
 
 
 ### 3、红点叶子节点支持缓存配置
@@ -77,8 +77,10 @@ RedpointTree</br>
 <div align=center>叶子节点缓存流程</div>
 
 #### 代码实现<br>
-    <!--messagebox.xml的红点树叶子节点-->
-    <RedPoint app:id="@string/messagebox_system" app:needCache="true"/>
+    <!--messagebox.xml的红点树叶子节点 配置 app:needCache="true"-->
+    <RedPoint
+        app:id="@string/messagebox_system"
+        app:needCache="true"/>
 
     //缓存prekey配置(为了支持多账号的红点树缓存)
     RedPointConfig.redPointCachePreKey = object:RedPointConfig.IRedPointCachePreKey{
@@ -115,6 +117,9 @@ RedpointTree</br>
                                    var systemMsgCount:Int = 0,
                                    @BindRedPoint(redPointId = "messagebox_moment")
                                    var momentMsgCount:Int = 0)
+属性说明:<br>
+    * InvalidateType.Tree : 每个字段解析完后之后，设置@BindRedPoint的未读数量后， 最后统一刷新一下红点树<br>
+    * InvalidateType.Point : 每解析完字段，设置@BindRedPoint的未读数量后 都刷新下@BindRedPoint<br>
 
 #### 4.2 手动更新，也是可以
 
