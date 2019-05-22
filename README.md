@@ -1,11 +1,11 @@
 # RedpointTree
 RedpointTree</br>
 ## 前言</br>
-每个app几乎都有红点业务，RedpointTree组件提供类似android 布局 xml 方式，来简化红点更新逻辑，并同时提供更好的扩展性<br>
-![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/0_CrossHierarchyActivity.gif)<br>
+每个app几乎都有红点业务，RedpointTree组件提供类似android 布局 xml 方式，来简化红点更新逻辑，并同时提供更好的扩展性<br><br>
+<div align=center>![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/0_CrossHierarchyActivity.gif)</div><br>
 <div align=center>CrossHierarchyActivity 效果图</div><br>
 
-![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/0_RedPointTreeInSimpleActivity.gif)<br>
+<div align=center>![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/0_RedPointTreeInSimpleActivity.gif)</div><br>
 <div align=center>RedPointTreeInSimpleActivity 效果图</div><br>
 
 
