@@ -5,7 +5,7 @@ RedpointTree</br>
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/0_CrossHierarchyActivity.gif)<br>
 &emsp;&emsp;&emsp;&emsp;&emsp;CrossHierarchyActivity效果图<br><br>
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/0_RedPointTreeInSimpleActivity.gif)<br>
-&emsp;&emsp;&emsp;&emsp;&emsp;RedPointTreeInSimpleActivity 效果图
+&emsp;&emsp;&emsp;RedPointTreeInSimpleActivity 效果图
 
 
 ## 一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
