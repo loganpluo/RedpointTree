@@ -93,11 +93,10 @@ RedpointTree</br>
 
 
 代码说明：<br>
-    * 缓存的key = getRedPointCachePreKey() + "&" + RedPoint.id
-    * 所以RedPoint的app:id一定要定义全局唯一(当然如果后面有需要，可以再追加treeName)
+    * 缓存的key = getRedPointCachePreKey() + "&" + RedPoint.id 所以RedPoint的app:id一定要定义全局唯一(当然如果后面有需要，可以再追加treeName)
 
-### 4、拉去红点未读数量，设置红点数量
-#### 4.1 annotation response, 自动映射更新
+### 4、拉取红点未读数量，设置红点数量
+#### 4.1 annotation response bean, 自动映射更新到红点view
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/6-AppRequestFinishListener_clear.png)<br>
 <div align=center>post请求消息列表清除红点流程</div>
 
@@ -105,7 +104,7 @@ RedpointTree</br>
     //step1: app网络层，监听成功回调，类似下面
     HttpUtils.requestFinishListener = object:RequestFinishListener{
         override fun onSuccess(url:String, param: Any, response: Any) {
-            ParseRedPointAnnotaionUtil.invalidate(response)//自动解析response Annotaion
+            ParseRedPointAnnotaionUtil.invalidate(response)//自动解析response bean Annotaion
         }
     }
 
@@ -186,6 +185,51 @@ RedpointTree</br>
             return offset == 0
         }
     }
+
+##### 拓展获取Retrofit call里面的请求参数<br>
+经过研究只能反射获取requestbody,Retrofit并没有公开的api提供
+##### 代码实现<br>
+
+    /**
+     * 反射获取请求参数的body(Retrofit2.4.0版本)
+     */
+    fun parseCallRequestParams(call : Call<*>):Array<*>?{
+        try{
+
+            call.request().tag()
+
+            //参数返回
+            val delegateField = call.javaClass.getDeclaredField("delegate")
+
+            delegateField.isAccessible = true
+            val delegate = delegateField.get(call)
+
+            val argsField = delegate.javaClass.getDeclaredField("args")
+            if(argsField.type.isArray){
+                argsField.isAccessible = true
+                return argsField.get(delegate) as Array<*>
+            }
+
+        }catch (t:Throwable){
+            LogUtil.printStackTrace(t)
+        }
+
+        return null
+    }
+
+    //例如这个接口
+    interface GetMomentMsgListProtocol{
+
+        @Headers("Content-Type: application/json; charset=utf-8")
+        @POST("momentlist")
+        fun getMomentMsgList(@Body body: MomentMsgListRequest): Call<GetMomentMsgListResult>
+
+    }
+
+    //获取的call
+    val call = Retrofit.Builder().build().create(GetMomentMsgListProtocol::class.java).getMomentMsgList(MomentMsgListRequest())
+    //通过
+    val params = parseCallRequestParams(call)// 数组第一个就是MomentMsgListRequest()
 
 #### 6.2 get请求请求消息列表，清除对应红点
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/7-clearByUrl(url)_AppRequestFinishListener.png)<br>
