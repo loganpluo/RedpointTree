@@ -92,12 +92,51 @@ RedpointTree</br>
     RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox, true)
 
 
-代码说明：
+代码说明：<br>
     * 缓存的key = getRedPointCachePreKey() + "&" + RedPoint.id
     * 所以RedPoint的app:id一定要定义全局唯一(当然如果后面有需要，可以再追加treeName)
 
+### 4、拉去红点未读数量，设置红点数量
+#### 4.1 annotation response, 自动映射更新
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/6-AppRequestFinishListener_clear.png)<br>
+<div align=center>post请求消息列表清除红点流程</div>
 
-### 4、跳转消息列表，清除对应红点
+#### 代码实现<br>
+    //step1: app网络层，监听成功回调，类似下面
+    HttpUtils.requestFinishListener = object:RequestFinishListener{
+        override fun onSuccess(url:String, param: Any, response: Any) {
+            ParseRedPointAnnotaionUtil.invalidate(response)//自动解析response Annotaion
+        }
+    }
+
+    //step2:  rsp的响应bean的字段 Annotaion 关联红点树节点； 同时声明刷新模式
+    @RedPointCountRsp(treeName = "messagebox",invalidateType = InvalidateType.Tree)
+    class MessageBoxUnReadCountRsp(var code:Int = 0,
+                                   @BindRedPoint(redPointId = "messagebox_system")
+                                   var systemMsgCount:Int = 0,
+                                   @BindRedPoint(redPointId = "messagebox_moment")
+                                   var momentMsgCount:Int = 0)
+
+#### 4.2 手动更新，也是可以
+
+#### 代码实现<br>
+        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
+        redpointTree.findRedPointById(R.string.messagebox_system)!!.apply {//设置系统消息数量，不需要刷新，因为没有关联红点view刷新
+            setUnReadCount(12)
+        }
+
+        redpointTree.findRedPointById(R.string.messagebox_moment)!!.apply {//设置动态消息数量，不需要刷新，因为没有关联红点view刷新
+            setUnReadCount(1)
+        }
+
+        root = redpointTree.findRedPointById("messagebox_root")!!
+        root!!.apply {
+            addObserver(rootRedPointObserver)
+        }.invalidateSelf()//当前activity只有显示root的红点，所以只需要刷新它自己就好
+
+
+
+### 5、跳转消息列表，清除对应红点
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/5-route_clearByIntent.png)<br>
 <div align=center>监听全局路由清除红点流程</div>
 
@@ -122,9 +161,9 @@ RedpointTree</br>
         getRedPointTree(R.string.messagebox_tree)?.
         findRedPointById(R.string.messagebox_system).invalidate(0)
 
-### 5、消息列表，下拉刷新清除对应红点
+### 6、消息列表，下拉刷新清除对应红点
 
-#### 5.1 post请求消息列表，清除对应红点
+#### 6.1 post请求消息列表，清除对应红点
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/6-AppRequestFinishListener_clear.png)<br>
 <div align=center>post请求消息列表清除红点流程</div>
 
@@ -148,7 +187,7 @@ RedpointTree</br>
         }
     }
 
-#### 5.2 get请求请求消息列表，清除对应红点
+#### 6.2 get请求请求消息列表，清除对应红点
 ![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/7-clearByUrl(url)_AppRequestFinishListener.png)<br>
 <div align=center>post请求消息列表清除红点流程</div>
 
@@ -167,52 +206,10 @@ RedpointTree</br>
         app:clearUrl="http://SystemMsgListRequest?page=0"/>
 
 
-#### 5.3 手动代码清除也是可以的
+#### 6.3 手动代码清除也是可以的
     RedPointTreeCenter.getInstance().
         getRedPointTree(R.string.messagebox_tree)?.
         findRedPointById(R.string.messagebox_system).invalidate(0)
-
-
-
-### 6、拉去红点未读数量，设置红点数量
-#### 6.1 annotation response, 自动映射更新
-![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/6-AppRequestFinishListener_clear.png)<br>
-<div align=center>post请求消息列表清除红点流程</div>
-
-#### 代码实现<br>
-    //step1: app网络层，监听成功回调，类似下面
-    HttpUtils.requestFinishListener = object:RequestFinishListener{
-        override fun onSuccess(url:String, param: Any, response: Any) {
-            ParseRedPointAnnotaionUtil.invalidate(response)//自动解析response Annotaion
-        }
-    }
-
-    //step2:  rsp的响应bean的字段 Annotaion 关联红点树节点； 同时声明刷新模式
-    @RedPointCountRsp(treeName = "messagebox",invalidateType = InvalidateType.Tree)
-    class MessageBoxUnReadCountRsp(var code:Int = 0,
-                                   @BindRedPoint(redPointId = "messagebox_system")
-                                   var systemMsgCount:Int = 0,
-                                   @BindRedPoint(redPointId = "messagebox_moment")
-                                   var momentMsgCount:Int = 0)
-
-#### 6.2 手动更新，也是可以
-
-#### 代码实现<br>
-        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
-        redpointTree.findRedPointById(R.string.messagebox_system)!!.apply {//设置系统消息数量，不需要刷新，因为没有关联红点view刷新
-            setUnReadCount(12)
-        }
-
-        redpointTree.findRedPointById(R.string.messagebox_moment)!!.apply {//设置动态消息数量，不需要刷新，因为没有关联红点view刷新
-            setUnReadCount(1)
-        }
-
-        root = redpointTree.findRedPointById("messagebox_root")!!
-        root!!.apply {
-            addObserver(rootRedPointObserver)
-        }.invalidateSelf()//当前activity只有显示root的红点，所以只需要刷新它自己就好
-
-
 
 
 ## 二、所有红点在一个界面的场景（RedPointTreeInSimpleActivity 手动创建红点树）
