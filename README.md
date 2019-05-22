@@ -28,26 +28,25 @@ RedpointTree</br>
     <string name="messagebox_system">messagebox_system</string>
     <string name="messagebox_moment">messagebox_moment</string>
 
-RedPointGroup非叶子节点；<br>
-RedPoint叶子节点；<br>
-app:id定义id, string类型,<br>
-app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来当做key，所以app:id定义一定要唯一
-（用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
+代码说明：
+    RedPointGroup非叶子节点；<br>
+    RedPoint叶子节点；<br>
+    app:id定义id, string类型,<br>
+    app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来当做key，所以app:id定义一定要唯一
+    （用mmkv缓存，构建时候读取缓存，动态观察unReadCount来更新缓存）
     
-#### （2) 加载xml，构建单利RedpointTree
+#### (2)加载xml，构建单利RedpointTree
 
     RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox)
     //如果需要移除则调用RedPointTreeCenter.getInstance().remove("messagebox")
 
-3、初始化红点树（未读数 和 关联刷新红点）（CrossHierarchyActivity）
+### 2、Redpointview自动关联红点树的节点
 
-    3.1 activity_cross_hierarchy.xml 
-    使用能自定义关联红点树中的节点的 RedPointTextView(onAttachedToWindow 和 onDetachedFromWindow 自动关联红点树的节点)
-    app:redPointTreeName指定 红点树的名字；
-    app:redPointId 指定节点id
-    app:redPointStyle 红点样式(红点或者未读数量)
-    如果app里面使用自定义view，可以继承RedPointView 来自动绑定观察红点数量
-    
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/3-auto_bind_RedPointTextView.png)<br>
+<div align=center>自动关联红点流程图</div>
+
+#### 代码实现(activity_cross_hierarchy.xml)<br>
+
     <com.github.redpointtree.RedPointTextView
         android:id="@+id/rootRedPoint"
         android:layout_width="20dp"
@@ -62,12 +61,145 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
         tools:visibility="visible"
         tools:text="22"
         android:background="@drawable/red_point"/>
-    
-    3.2 设置红点未读数量
-    private var root: RedPoint? = null
 
-    private fun loadMessageBoxTree(){
+自定义属性说明：
+    app:redPointTreeName指定 红点树的名字；
+    app:redPointId 指定节点id
+    app:redPointStyle 红点样式(红点或者未读数量)
 
+流程过程说明：
+    onAttachedToWindow 自动创建观察者，绑定到对应红点树的节点；
+    onDetachedFromWindow 自动移除观察者
+扩展:
+     如果是app红点view是自定义的view，自定义view可以继承RedPointView，也可以实现来自动绑定观察红点数量
+
+
+### 3、红点叶子节点支持缓存配置
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/4-needCache_mmkv.png)<br>
+<div align=center>叶子节点缓存流程</div>
+
+#### 代码实现<br>
+    <!--messagebox.xml的红点树叶子节点-->
+    <RedPoint app:id="@string/messagebox_system" app:needCache="true"/>
+
+    //缓存prekey配置(为了支持多账号的红点树缓存)
+    RedPointConfig.redPointCachePreKey = object:RedPointConfig.IRedPointCachePreKey{
+        override fun getRedPointCachePreKey(): String {
+            return "1"//do 查询当前登录的userid
+        }
+
+    }
+
+    //加载红点树的xml,默认是会load叶子节点的缓存的未读数量(如果叶子节点配置app:needCache="true")
+    RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox, true)
+
+
+代码说明：
+    缓存的key = getRedPointCachePreKey() + "&" + RedPoint.id
+    所以RedPoint的app:id一定要定义全局唯一(当然如果后面有需要，可以再追加treeName)
+
+
+### 4、跳转消息列表，清除对应红点
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/5-route_clearByIntent.png)<br>
+<div align=center>监听全局路由清除红点流程</div>
+
+#### 代码实现<br>
+    //step1:app全局路由中添加，RouteListener 类似下面
+    //step2:在监听的路由回调中 获取intent，
+    //      然后调用RedPointTreeCenter.getInstance().clearByIntent(intent),会自动根据intent来寻找RedPoint，自动清除红点
+    RouteUtils.routeListener = object:RouteUtils.RouteListener{
+        override fun dispatch(intent: String) {
+            RedPointTreeCenter.getInstance().clearByIntent(intent)
+        }
+    }
+
+    //step3: 在红点树的xml中，对RedPoint 声明 app:clearIntent= "activity跳转的intent"
+    <RedPoint
+        app:id="@string/messagebox_system"
+        app:needCache="true"
+        app:clearIntent="redpointtree://system_msglist"/>
+
+    //如果你想写在activity页面，手动清除也可以
+    RedPointTreeCenter.getInstance().
+        getRedPointTree(R.string.messagebox_tree)?.
+        findRedPointById(R.string.messagebox_system).invalidate(0)
+
+### 5、消息列表，下拉刷新清除对应红点
+
+#### 5.1 post请求消息列表，清除对应红点
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/6-AppRequestFinishListener_clear.png)<br>
+<div align=center>post请求消息列表清除红点流程</div>
+
+#### 代码实现<br>
+    //step1: app网络层，设置成功回调，类似下面
+    HttpUtils.requestFinishListener = object:RequestFinishListener{
+        override fun onSuccess(url:String, param: Any, response: Any) {
+            ParseRedPointAnnotaionUtil.clear(param)//会判断是不是消息列表第一页拉去, 找到对应RedPoint清除掉
+        }
+    }
+
+    //step2: post的请求param ，继承 ClearRedPointRequest来说明是不是第一页；
+    //       注解@BindRedPoint对应的节点
+    @BindRedPoint(treeName = "messagebox", redPointId = "messagebox_moment")
+    class MomentMsgListRequest : ClearRedPointRequest {
+
+        var offset = 0
+
+        override fun isFirstPage(): Boolean {
+            return offset == 0
+        }
+    }
+
+#### 5.2 get请求请求消息列表，清除对应红点
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/7-clearByUrl(url)_AppRequestFinishListener.png)<br>
+<div align=center>post请求消息列表清除红点流程</div>
+
+#### 代码实现<br>
+    //step1: app网络层，监听成功回调，设置clearByUrl， 类似下面
+    HttpUtils.requestFinishListener = object:RequestFinishListener{
+        override fun onSuccess(url:String, param: Any, response: Any) {
+            RedPointTreeCenter.getInstance().clearByUrl(url)//根据url寻找对应的RedPoint，然后清除
+        }
+    }
+
+    //step2:  在红点树的xml中，对RedPoint 声明 app:clearUrl= "消息列表第一页请求"
+    <RedPoint
+        app:id="@string/messagebox_system"
+        app:needCache="true"
+        app:clearUrl="http://SystemMsgListRequest?page=0"/>
+
+
+#### 5.3 手动代码清除也是可以的
+    RedPointTreeCenter.getInstance().
+        getRedPointTree(R.string.messagebox_tree)?.
+        findRedPointById(R.string.messagebox_system).invalidate(0)
+
+
+
+### 6、拉去红点未读数量，设置红点数量
+#### 6.1 annotation response, 自动映射更新
+![](https://github.com/loganpluo/RedpointTree/blob/master/redpointtree/pic/6-AppRequestFinishListener_clear.png)<br>
+<div align=center>post请求消息列表清除红点流程</div>
+
+#### 代码实现<br>
+    //step1: app网络层，监听成功回调，类似下面
+    HttpUtils.requestFinishListener = object:RequestFinishListener{
+        override fun onSuccess(url:String, param: Any, response: Any) {
+            ParseRedPointAnnotaionUtil.invalidate(response)//自动解析response Annotaion
+        }
+    }
+
+    //step2:  rsp的响应bean的字段 Annotaion 关联红点树节点； 同时声明刷新模式
+    @RedPointCountRsp(treeName = "messagebox",invalidateType = InvalidateType.Tree)
+    class MessageBoxUnReadCountRsp(var code:Int = 0,
+                                   @BindRedPoint(redPointId = "messagebox_system")
+                                   var systemMsgCount:Int = 0,
+                                   @BindRedPoint(redPointId = "messagebox_moment")
+                                   var momentMsgCount:Int = 0)
+
+#### 6.2 手动更新，也是可以
+
+#### 代码实现<br>
         val redpointTree = MessageBoxManager.getInstance(this).redpointTree
         redpointTree.findRedPointById(R.string.messagebox_system)!!.apply {//设置系统消息数量，不需要刷新，因为没有关联红点view刷新
             setUnReadCount(12)
@@ -81,83 +213,13 @@ app:needCache，是不是缓存unReadCount，注意true时，默认用app:id来�
         root!!.apply {
             addObserver(rootRedPointObserver)
         }.invalidateSelf()//当前activity只有显示root的红点，所以只需要刷新它自己就好
-        
-        //如果时监听广播设置红点数量之后，调用root!!.invalidate()可以刷新整个树
-
-    }
-
-
-5、点击进入消息盒子（MessageBoxActivity）
-
-    activity_messagebox.xml 使用自定义RedPointTextView自动关联红点节点
-    <?xml version="1.0" encoding="utf-8"?>
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/systemRedPointText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="click_system"
-            app:layout_constraintTop_toBottomOf="@id/rootView"/>
-
-        <com.github.redpointtree.RedPointTextView
-            android:id="@+id/systemRedPointView"
-            android:layout_width="5dp"
-            android:layout_height="5dp"
-            app:layout_constraintTop_toTopOf="@id/systemRedPointText"
-            app:layout_constraintRight_toRightOf="@id/systemRedPointText"
-            app:redPointTreeName="@string/messagebox_tree"
-            app:redPointId="@string/messagebox_system"
-            app:redPointStyle="point"
-            android:textColor="@android:color/white"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            android:background="@drawable/red_point"/>
-
-        <TextView
-            android:id="@+id/momentRedPointText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="click_moment"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rootView"/>
-
-
-        <com.github.redpointtree.RedPointTextView
-            android:id="@+id/momentRedPointView"
-            android:layout_width="5dp"
-            android:layout_height="5dp"
-            app:layout_constraintTop_toTopOf="@id/momentRedPointText"
-            app:layout_constraintRight_toRightOf="@id/momentRedPointText"
-            app:redPointTreeName="@string/messagebox_tree"
-            app:redPointId="@string/messagebox_moment"
-            app:redPointStyle="point"
-            android:textColor="@android:color/white"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            android:background="@drawable/red_point"/>
-
-    </android.support.constraint.ConstraintLayout>
 
 
 
-4、查看系统消息（SystemMsgActivity），清除系统消息的红点
 
-       val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree(getString(R.string.messagebox_tree))
+## 二、所有红点在一个界面的场景（RedPointTreeInSimpleActivity 手动创建红点树）
 
-       redpointTree!!.findRedPointById(R.string.messagebox_system)!!.invalidate(0)
-       //通常还需要拉去消息列表第一页成功后，invalidate(0) (防止用户停留在这个页面，下拉刷新)
-
-
-二、所有红点在一个界面的场景（RedPointTreeInSimpleActivity 手动创建红点树）
-
+#### 代码实现<br>
     val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
     val root = RedPointGroup("messagebox_root")//构建非叶子节点，id 是string，尽量给唯一值，可以给资源id R.string.messagebox_root
     root.setObserver(object: RedPointObserver {//给非叶子节点添加观察者，通知红点view刷新
