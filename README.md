@@ -15,7 +15,7 @@ RedpointTree</br>
 * 配置化设置红点数量 和清除红点 (后面 4、5、6)
 
 ### 目前最新版本
-com.github.redpointtree:redpointtree:1.0.12
+com.github.redpointtree:redpointtree:1.0.14
 
 ## 一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
 ### 1、红点树构建<br>
