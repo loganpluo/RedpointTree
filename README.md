@@ -14,6 +14,9 @@ RedpointTree</br>
 * 支持叶子红点自动缓存未读数量，断网情况下体验良好(后面 3、红点叶子节点支持缓存配置)
 * 配置化设置红点数量 和清除红点 (后面 4、5、6)
 
+### 目前最新版本
+com.github.redpointtree:redpointtree:1.0.12
+
 ## 一、红点分布在不同页面的场景（CrossHierarchyActivity xml创建红点树）<br>
 ### 1、红点树构建<br>
 
@@ -132,7 +135,7 @@ RedpointTree</br>
 属性说明:<br>
     * InvalidateType.Tree : 每个字段解析完后之后，设置@BindRedPoint的未读数量后， 最后统一刷新一下红点树<br>
     * InvalidateType.Point : 每解析完字段，设置@BindRedPoint的未读数量后 都刷新下@BindRedPoint<br>
-
+    * 注意支持@Keep的annotation的混淆，因为InvalidateType在release版本起作用 得避免混淆
 #### 4.2 手动更新，也是可以
 
 #### 代码实现<br>
