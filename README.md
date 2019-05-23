@@ -139,7 +139,7 @@ com.github.redpointtree:redpointtree:1.0.14
 #### 4.2 手动更新，也是可以
 
 #### 代码实现<br>
-        val redpointTree = MessageBoxManager.getInstance(this).redpointTree
+        val redpointTree = RedPointTreeCenter.getInstance().getRedPointTree("messagebox")
         redpointTree.findRedPointById(R.string.messagebox_system)!!.apply {//设置系统消息数量，不需要刷新，因为没有关联红点view刷新
             setUnReadCount(12)
         }
