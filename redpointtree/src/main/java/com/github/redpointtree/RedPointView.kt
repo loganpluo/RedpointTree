@@ -12,9 +12,9 @@ import com.github.redpointtree.util.LogUtil
  */
 abstract class RedPointView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : View (context, attrs, defStyleAttr) {
 
-    private var treeName:String? = null
-    private var redPointId:String? = null
-    private var redPointStyle = RedPointStyle.UNREAD_COUNT //0（默认是显示个数），1：显示红点
+    var treeName:String? = null
+    var redPointId:String? = null
+    var redPointStyle = RedPointStyle.UNREAD_COUNT //0（默认是显示个数），1：显示红点
     private val tag = "RedPointView"
 
     constructor(context: Context):this(context,null, 0)

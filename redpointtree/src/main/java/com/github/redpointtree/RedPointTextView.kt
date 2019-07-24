@@ -21,9 +21,9 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
     constructor(context: Context, @Nullable attributeSet: AttributeSet):this(context, attributeSet, 0)
 
 
-    private var treeName:String? = null
-    private var redPointId:String? = null
-    private var redPointStyle = RedPointStyle.UNREAD_COUNT //0（默认是显示个数），1：显示红点
+    var treeName:String? = null
+    var redPointId:String? = null
+    var redPointStyle = RedPointStyle.UNREAD_COUNT //0（默认是显示个数），1：显示红点
 
     init {
         if(attrs != null){
