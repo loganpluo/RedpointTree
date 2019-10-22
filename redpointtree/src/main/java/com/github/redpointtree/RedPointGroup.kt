@@ -7,9 +7,11 @@ import com.github.redpointtree.util.LogUtil
  * Created by loganpluo on 2019/4/14.
  */
 open class RedPointGroup(id:String) : RedPoint(id) {
-    private val tag = "RedPointGroup"
-    private var childrenList = ArrayList<RedPoint>()
+    private val TAG = "RedPointGroup"
+    var childrenList = ArrayList<RedPoint>()
     private var childrenMap = HashMap<String, RedPoint>()
+
+
 
     /**
      * add 并不会执行刷新view
@@ -17,7 +19,7 @@ open class RedPointGroup(id:String) : RedPoint(id) {
     fun addChild(redPoint: RedPoint):Boolean{
 
         if(TextUtils.isEmpty(redPoint.getId())){
-            LogUtil.e(tag,"addChild fail, redPoint.getId is empty")
+            LogUtil.e(TAG,"addChild fail, redPoint.getId is empty")
             return false
         }
 

@@ -13,6 +13,8 @@ open class RedPoint(tid:String) {
 
     private var id:String = ""
 
+    var tag:String? = null//分类的tag标签
+
     init {
         setId(tid)
     }
@@ -71,13 +73,13 @@ open class RedPoint(tid:String) {
         notifyObserver()
     }
 
-    open internal fun invalidateParent(){
+    open fun invalidateParent(){
         //通知parent也更新关联的红点view
         parent?.invalidateParent()
 
     }
 
-    open internal fun invalidateChildren(){
+    open fun invalidateChildren(){
         invalidateSelf()
     }
 

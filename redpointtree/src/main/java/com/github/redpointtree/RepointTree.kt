@@ -19,6 +19,29 @@ class RepointTree(ctx: Context,@XmlRes val xml:Int) {
     private val context:Context = ctx.applicationContext
     private var rootRedPointGroup:RedPointGroup
 
+    companion object{
+        fun findRedPointByTag(tag:String, redPoint: RedPoint):List<RedPoint>{
+
+            val findTagRedPointList = ArrayList<RedPoint>()
+            findRedPointByTag(tag,redPoint,findTagRedPointList)
+
+            return findTagRedPointList
+        }
+
+        private fun findRedPointByTag(tag:String, redPoint: RedPoint, list:MutableList<RedPoint>){
+
+            if(redPoint.tag == tag){
+                list.add(redPoint)
+            }
+            if(redPoint is RedPointGroup){
+                redPoint.childrenList.forEach {
+                    findRedPointByTag(tag, it, list)
+                }
+            }
+
+        }
+    }
+
     init {
         rootRedPointGroup = parseXml(context, xml)
     }
@@ -28,6 +51,10 @@ class RepointTree(ctx: Context,@XmlRes val xml:Int) {
             return rootRedPointGroup
         }
         return rootRedPointGroup.findRedPointById(id)
+    }
+
+    fun findRedPointByTag(tag:String):List<RedPoint>{
+        return findRedPointByTag(tag,rootRedPointGroup)
     }
 
 
