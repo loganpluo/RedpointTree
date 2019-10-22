@@ -7,11 +7,14 @@ import com.github.redpointtree.util.LogUtil
  * Created by loganpluo on 2019/4/14.
  */
 open class RedPointGroup(id:String) : RedPoint(id) {
-    private val TAG = "RedPointGroup"
-    var childrenList = ArrayList<RedPoint>()
-    private var childrenMap = HashMap<String, RedPoint>()
 
+    private var childrenList = ArrayList<RedPoint>()
 
+    fun getChildren():List<RedPoint>{
+        return childrenList
+    }
+
+    override var tag: String = "RedPointGroup"
 
     /**
      * add 并不会执行刷新view
@@ -19,11 +22,11 @@ open class RedPointGroup(id:String) : RedPoint(id) {
     fun addChild(redPoint: RedPoint):Boolean{
 
         if(TextUtils.isEmpty(redPoint.getId())){
-            LogUtil.e(TAG,"addChild fail, redPoint.getId is empty")
+            LogUtil.e(tag,"addChild fail, redPoint.getId is empty")
             return false
         }
 
-        //删除原来的
+//        //删除原来的
 //        val findRedPoint = findRedPointById(redPoint.getId())
 //        if(findRedPoint != null){
 //            LogUtil.i(tag,"addChild remove pre redpoint, redPoint.getId:${redPoint.getId()}")
@@ -31,7 +34,6 @@ open class RedPointGroup(id:String) : RedPoint(id) {
 //        }
 
         childrenList.add(redPoint)
-        childrenMap.put(redPoint.getId(),redPoint)
         redPoint.addParent(this)
 
         return true
@@ -66,7 +68,6 @@ open class RedPointGroup(id:String) : RedPoint(id) {
 
     fun removeChild(redPoint: RedPoint){
         childrenList.remove(redPoint)
-        childrenMap.remove(redPoint.getId())
         redPoint.removeFromParent()
 
     }
@@ -75,37 +76,55 @@ open class RedPointGroup(id:String) : RedPoint(id) {
         throw UnSuppotOperation("RedPointGroup invalidate to up ")
     }
 
-    override fun invalidate() {
+    override fun invalidate(){
+        invalidate(true)
+    }
+
+    override fun invalidate(needWriteCache:Boolean) {
         //也刷新下子节点
-        invalidateChildren()
-        invalidateParent()
+        invalidateChildren(needWriteCache)
+        invalidateParent(needWriteCache)
     }
 
 
 
     override fun invalidateParent() {
-        invalidateSelf()
+        invalidateParent(true)
+    }
+
+    override fun invalidateParent(needWriteCache:Boolean) {
+        //todo 如果直接从group节点调用invalidate()则 存在invalidateSelf被调用两次(invalidateParent中一次,invalidateChildren一次)
+        //不过notifyObservers中有count是否变动的判断，不会造成observer重复被通知
+        invalidateSelf(needWriteCache)
+
         //通知parent也更新关联的红点view
-        parent?.invalidateParent()
+        parent?.invalidateParent(needWriteCache)
     }
 
     override fun invalidateChildren() {
+        invalidateChildren(true)
+    }
+
+    override fun invalidateChildren(needWriteCache:Boolean) {
+        //todo 如果直接从group节点调用invalidate()则 存在invalidateSelf被调用两次(invalidateParent中一次,invalidateChildren一次)
+        //不过notifyObservers中有count是否变动的判断，不会造成observer重复被通知
+        invalidateSelf(needWriteCache)
+
         childrenList.forEach {
-            it.invalidateChildren()
+            it.invalidateChildren(needWriteCache)
         }
     }
 
+    override fun invalidateSelf(){
+        invalidateSelf(true)
+    }
 
-     override fun invalidateSelf(){
+     override fun invalidateSelf(needWriteCache:Boolean){
         val calculateUnReadCount = getTotalChildrenUnReadCount(this,0)
-        if(calculateUnReadCount == getUnReadCount()){
-            return
-        }
 
         setUnReadCount(calculateUnReadCount)
 
-
-        notifyObserver()
+        notifyObservers(needWriteCache)
     }
 
     //todo check 调用这是不是 自己，红点viewgroup的未读个数是要getTotalChildrenUnReadCount来获取的
@@ -118,7 +137,7 @@ open class RedPointGroup(id:String) : RedPoint(id) {
         var totalUnReadCountCopy = totalUnReadCount
         if(redPoint is RedPointGroup){//如果是父亲节点，则继续遍历
 
-            childrenList.forEach {
+            redPoint.childrenList.forEach {
                 totalUnReadCountCopy += getTotalChildrenUnReadCount(it,totalUnReadCountCopy)
             }
 

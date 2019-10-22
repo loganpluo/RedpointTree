@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="10dp">
 
     <TextView
@@ -10,15 +11,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="system"
+        android:text="click_system"
         app:layout_constraintTop_toBottomOf="@id/rootView"/>
-    <View
+
+    <com.github.redpointtree.RedPointTextView
         android:id="@+id/systemRedPointView"
         android:layout_width="5dp"
         android:layout_height="5dp"
         app:layout_constraintTop_toTopOf="@id/systemRedPointText"
         app:layout_constraintRight_toRightOf="@id/systemRedPointText"
+        app:redPointTreeName="@string/messagebox_tree"
+        app:redPointId="@string/messagebox_system"
+        app:redPointStyle="point"
+        android:textColor="@android:color/white"
         android:visibility="invisible"
+        tools:visibility="visible"
         android:background="@drawable/red_point"/>
 
     <TextView
@@ -26,16 +33,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="moment"
+        android:text="click_moment"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rootView"/>
-    <View
+
+
+    <com.github.redpointtree.RedPointTextView
         android:id="@+id/momentRedPointView"
         android:layout_width="5dp"
         android:layout_height="5dp"
         app:layout_constraintTop_toTopOf="@id/momentRedPointText"
         app:layout_constraintRight_toRightOf="@id/momentRedPointText"
+        app:redPointTreeName="@string/messagebox_tree"
+        app:redPointId="@string/messagebox_moment"
+        app:redPointStyle="point"
+        android:textColor="@android:color/white"
         android:visibility="invisible"
+        tools:visibility="visible"
         android:background="@drawable/red_point"/>
 
 </android.support.constraint.ConstraintLayout>

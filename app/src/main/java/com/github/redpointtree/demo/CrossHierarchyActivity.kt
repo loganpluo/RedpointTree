@@ -3,17 +3,15 @@ package com.github.redpointtree.demo
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import com.github.redpointtree.RedPoint
-import com.github.redpointtree.RedPointGroup
-import com.github.redpointtree.RedPointObserver
-import com.github.redpointtree.RepointTree
+import com.github.redpointtree.demo.http.HttpRspCallBack
+import com.github.redpointtree.demo.http.HttpUtils
+import com.github.redpointtree.demo.http.test.MessageBoxUnReadCountRequest
+import com.github.redpointtree.demo.http.test.MessageBoxUnReadCountRsp
 import kotlinx.android.synthetic.main.activity_cross_hierarchy.*
 
 class CrossHierarchyActivity : AppCompatActivity() {
 
-    val tag = "CrossHierarchyActivity|RepointTree"
-
+    val tag = "CrossHierarchyActivity|RedpointTree"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,43 +23,19 @@ class CrossHierarchyActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        loadMessageBoxTree()
-    }
+        //意思下
+        HttpUtils.request("http://MessageBoxUnReadCountRequest", MessageBoxUnReadCountRequest(), object:HttpRspCallBack<MessageBoxUnReadCountRsp>{
 
-    private val rootRedPointObserver = object:RedPointObserver{
-        override fun notify(unReadCount: Int) {
-            if(unReadCount > 0){
-                rootRedPoint.visibility = View.VISIBLE
-            }else{
-                rootRedPoint.visibility = View.INVISIBLE
+            override fun onFail(code: Int, msg: String) {
+
             }
-        }
-    }
 
-    private var root: RedPoint? = null
+            override fun onSuccess(response: MessageBoxUnReadCountRsp) {
+                //MessageBoxUnReadCountRsp注解绑定了节点 会自动更新，不用代码更新了
+            }
 
-    private fun loadMessageBoxTree(){
+        })
 
-        val repointTree = MessageBoxManager.getInstance(this).repointTree//RepointTree(this, R.xml.messagebox)
-        repointTree.findRedPointById("system")!!.apply {
-            setUnReadCount(12)
-        }
-
-        repointTree.findRedPointById("moment")!!.apply {
-            setUnReadCount(1)
-        }
-
-        root = repointTree.findRedPointById("root")!!
-        root!!.apply {
-            setObserver(rootRedPointObserver)
-        }.invalidateSelf()
-
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        root!!.removeObserver()
     }
 
 

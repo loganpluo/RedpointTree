@@ -1,5 +1,9 @@
 package com.github.redpointtree
 
+import android.os.Looper
+import android.text.TextUtils
+import com.github.redpointtree.util.LogUtil
+import com.github.redpointtree.util.SafeIterableMap
 
 
 /**
@@ -7,13 +11,24 @@ package com.github.redpointtree
  */
 open class RedPoint(tid:String) {
 
+    companion object {
+        val START_VERSION = -1
+    }
+
     internal var parent:RedPointGroup? = null
     private var unReadCount = 0
-    private var redPointObserver:RedPointObserver? = null
 
-    private var id:String = ""
+    private val observers = SafeIterableMap<RedPointObserver, VersionObserver>()
 
-    var tag:String? = null//分类的tag标签
+    private var id:String? = null
+
+    private var version = START_VERSION
+
+    private var mDispatchingValue: Boolean = false
+    private var mDispatchInvalidated: Boolean = false
+
+    protected open var tag = "RedPoint"
+
 
     init {
         setId(tid)
@@ -23,17 +38,40 @@ open class RedPoint(tid:String) {
         this.id = id
     }
 
-    open fun getId():String{
+    open fun getId():String?{
         return id
+    }
+
+
+
+    fun getCacheKey():String{
+        if(TextUtils.isEmpty(id)) return ""
+
+        val cacheKey = StringBuilder()
+
+        val preKey = RedPointConfig.redPointCachePreKey?.getRedPointCachePreKey()?:""
+        if(!TextUtils.isEmpty(preKey)){
+            cacheKey.append(preKey)
+            cacheKey.append("&")
+        }
+
+        cacheKey.append(id)
+
+        return cacheKey.toString()
     }
 
     open fun getUnReadCount():Int{
         return unReadCount
     }
 
-    //只给内部用，不要改成publish，用invalidate来设置unReadCount，因为只要unReadCount变动 就要触发刷新view
     open fun setUnReadCount(unReadCount:Int){
-        this.unReadCount = unReadCount
+        assertMainThread("setUnReadCount")
+        if(this.unReadCount != unReadCount){
+            this.unReadCount = unReadCount
+            version++
+            LogUtil.i(tag,"setUnReadCount id:$id, setUnReadCount($unReadCount:Int) ")
+        }
+
     }
 
     fun getParent():RedPointGroup?{
@@ -57,45 +95,121 @@ open class RedPoint(tid:String) {
             return
         }
 
-        this.unReadCount = unReadCount
-
+        setUnReadCount(unReadCount)
 
         invalidate()
     }
 
     open fun invalidate(){
-        invalidateSelf()
+        invalidate(true)
+    }
+
+    open fun invalidate(needWriteCache:Boolean){
+        invalidateSelf(needWriteCache)
         invalidateParent()
     }
 
     open fun invalidateSelf(){
+        invalidateSelf(true)
+    }
+
+    open fun invalidateSelf(needWriteCache:Boolean){
         //刷新当前关联的红点view
-        notifyObserver()
+        notifyObservers(needWriteCache)
     }
 
-    open fun invalidateParent(){
+    open internal fun invalidateParent(){
+        invalidateParent(true)
+    }
+
+    open internal fun invalidateParent(needWriteCache:Boolean){
         //通知parent也更新关联的红点view
-        parent?.invalidateParent()
-
+        parent?.invalidateParent(needWriteCache)
     }
 
-    open fun invalidateChildren(){
-        invalidateSelf()
+    open internal fun invalidateChildren(){
+        invalidateChildren(true)
+    }
+
+    open internal fun invalidateChildren(needWriteCache:Boolean){
+        invalidateSelf(needWriteCache)
     }
 
     /**
      * 只通知自己绑定的Observer
      */
-    open protected fun notifyObserver(){
-        redPointObserver?.notify(unReadCount)
+    open protected fun notifyObservers(needWriteCache:Boolean){
+        assertMainThread("notifyObservers")
+        //这一段是参考LiveData源码，为了防止多次调用？
+        if (mDispatchingValue) {
+            mDispatchInvalidated = true
+            return
+        }
+        mDispatchingValue = true
+        do {
+            mDispatchInvalidated = false
+            val iterator = observers.iteratorWithAdditions()
+            while (iterator.hasNext()) {
+                considerNotify(iterator.next().value, needWriteCache)
+                if (mDispatchInvalidated) {
+                    break
+                }
+            }
+        } while (mDispatchInvalidated)
+        mDispatchingValue = false
+
     }
 
-    fun setObserver(redPointObserver:RedPointObserver){
-        this.redPointObserver = redPointObserver
+    private fun considerNotify(observer: VersionObserver,needWriteCache:Boolean) {
+
+        if (observer.lastVersion >= version) {
+            return
+        }
+
+        //不需要写缓存,比如切换游客态的时候
+        if(!needWriteCache && (observer.redPointObserver is RedPointWriteCacheObserver)){
+            LogUtil.i(tag,"considerNotify id:$id,  not  needWriteCache")
+            return
+        }
+
+        observer.lastVersion = version
+
+        LogUtil.i(tag,"considerNotify id:$id, unReadCount:$unReadCount, ${observer.redPointObserver}")
+        observer.redPointObserver.notify(unReadCount)
     }
 
-    fun removeObserver(){
-        this.redPointObserver = null
+    open fun addObserver(redPointObserver:RedPointObserver){
+        val versionObserver = VersionObserver(redPointObserver)
+        val existing = observers.putIfAbsent(redPointObserver,versionObserver)
+        if(existing != null){
+            return
+        }
     }
+
+    open fun removeObserver(redPointObserver:RedPointObserver){
+        assertMainThread("removeObserver")
+        observers.remove(redPointObserver)
+    }
+
+
+    open fun removeAllObserver(){
+        assertMainThread("removeObservers")
+        for (entry in observers) {
+            removeObserver(entry.key)
+        }
+
+    }
+
+    private fun assertMainThread(methodName: String) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw IllegalStateException("Cannot invoke RedPoint." + methodName + " on a background"
+                    + " thread")
+        }
+    }
+
+    override fun toString(): String {
+        return "RedPoint(unReadCount=$unReadCount, id=$id)"
+    }
+
 
 }

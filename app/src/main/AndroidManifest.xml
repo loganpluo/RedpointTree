@@ -8,7 +8,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".MyApplication">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,8 +20,26 @@
         <activity android:name=".RedPointTreeInSimpleActivity" />
         <activity android:name=".CrossHierarchyActivity" />
         <activity android:name=".MessageBoxActivity" />
-        <activity android:name=".MomentMsgActivity" />
-        <activity android:name=".SystemMsgActivity" />
+        <activity android:name=".MomentMsgListActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="moment_msglist"
+                    android:scheme="@string/app_page_scheme" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SystemMsgActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="system_msglist"
+                    android:scheme="@string/app_page_scheme" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -7,10 +7,8 @@ apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion 26
 
-
-
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -36,19 +34,30 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     api 'com.android.support:appcompat-v7:26.1.0'
-    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
+    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.71"
+
+    api 'com.tencent:mmkv-static:1.0.15'
 
 }
 
 
 
-
+//1.0.5 支持红点自动缓存(忘记提交了，在0a57c3e 提供打印红点树的方法)
+//1.0.6 提供日志配置
+//1.0.7 xml支持跟节点是redpoint
+//1.0.8 写缓存的bug
+//1.0.9 支持自动view绑定红点观察者
+//1.0.10 读取属性的bug
+//1.0.11 扩展RedPointGroup的bug
+//1.0.12 提供协议rsp 自动映射到红点并且刷新；清除红点协议自动绑定节点； 红点支持多个clearintent配置
+//1.0.13 clearByUrl还是提供下罗；
+//1.0.14 InvalidateType混淆问题
 publish{
     userOrg = 'loganpluo' // Bintray 账号名
     groupId = 'com.github.redpointtree'
     artifactId = 'redpointtree'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.14'
     desc = 'This is redpointtree for anroid'
-    website = 'https://github.com/loganpluo/RepointTree'
+    website = 'https://github.com/loganpluo/RedpointTree'
 }

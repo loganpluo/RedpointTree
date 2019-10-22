@@ -2,29 +2,20 @@ package com.github.redpointtree.demo
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import com.github.redpointtree.RedPoint
 import com.github.redpointtree.RedPointGroup
 import com.github.redpointtree.RedPointObserver
-import com.github.redpointtree.RepointTree
-import com.github.redpointtree.util.LogUtil
 import kotlinx.android.synthetic.main.activity_redpoint_tree_in_simpleactivity.*
 
 class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
-    val tag = "RepointTree"
+    val tag = "MainActivity|RedpointTree"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_redpoint_tree_in_simpleactivity)
 
-
-        val myGroupItem = MyGroupItem("myGroupItem")
-
-        val item = MyItem("MyItem")
-
-        LogUtil.d(tag, " GroupItem.id:${myGroupItem.getId()}, item.getId:${item.getId()}")
 
         testRedPointTreeInSimpleActivity()
 
@@ -33,7 +24,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
     private fun testRedPointTreeInSimpleActivity(){
         val rootRedPointView = findViewById<View>(R.id.rootRedPoint)
         val root = RedPointGroup("root")
-        root.setObserver(object: RedPointObserver {
+        root.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
                     rootRedPointView.visibility = View.VISIBLE
@@ -45,9 +36,8 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
         })
 
         val level11RedPointView = findViewById<View>(R.id.level11RedPoint)
-        val level11 = RedPoint("level11")
-        level11.tag = "chat"
-        level11.setObserver(object: RedPointObserver {
+        val level11 = RedPoint("system")
+        level11.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
                     level11RedPointView.visibility = View.VISIBLE
@@ -65,9 +55,8 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
 
         val level12RedPointView = findViewById<View>(R.id.level12RedPoint)
-        val level12 = RedPoint("level121")
-        level12.tag = "chat"
-        level12.setObserver(object: RedPointObserver {
+        val level12 = RedPoint("moment")
+        level12.addObserver(object: RedPointObserver {
             override fun notify(unReadCount: Int) {
                 if(unReadCount > 0){
                     level12RedPointView.visibility = View.VISIBLE
@@ -90,11 +79,6 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
         //addChild时候怎么动态刷新
 
         //viewtree怎么刷新，会存在多次刷新吗
-
-        val list = RepointTree.findRedPointByTag("chat",root)
-        Log.d(tag,"testRedPointTreeInSimpleActivity findRedPointByTag list${list}")
-
-
 
 
     }

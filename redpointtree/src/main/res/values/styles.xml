@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RedPoint">
+        <attr name="id" format="string|reference" />
+        <attr name="needCache" format="boolean" />
+        <attr name="clearIntent" format="string|reference"/>
+        <attr name="clearUrl" format="string|reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="RedPointView">
+        <attr name="redPointTreeName" format="string|reference" />
+        <attr name="redPointId" format="string|reference" />
+        <attr name="redPointStyle" format="enum" >
+            <enum name="unread_count" value="0"/>
+            <enum name="point" value="1"/>
+        </attr>
+    </declare-styleable>
+
+</resources>

@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="level1_1"
+        android:text="click_level1_1"
         app:layout_constraintTop_toBottomOf="@id/rootView"/>
     <View
         android:id="@+id/level11RedPoint"
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="level1_2"
+        android:text="click_level1_2"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rootView"/>
     <View
