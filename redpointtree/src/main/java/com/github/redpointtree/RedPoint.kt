@@ -119,20 +119,20 @@ open class RedPoint(tid:String) {
         notifyObservers(needWriteCache)
     }
 
-    open internal fun invalidateParent(){
+    open fun invalidateParent(){
         invalidateParent(true)
     }
 
-    open internal fun invalidateParent(needWriteCache:Boolean){
+    open fun invalidateParent(needWriteCache:Boolean){
         //通知parent也更新关联的红点view
         parent?.invalidateParent(needWriteCache)
     }
 
-    open internal fun invalidateChildren(){
+    open fun invalidateChildren(){
         invalidateChildren(true)
     }
 
-    open internal fun invalidateChildren(needWriteCache:Boolean){
+    open fun invalidateChildren(needWriteCache:Boolean){
         invalidateSelf(needWriteCache)
     }
 

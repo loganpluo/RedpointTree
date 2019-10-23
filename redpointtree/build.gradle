@@ -55,11 +55,12 @@ dependencies {
 //1.0.14 InvalidateType混淆问题
 //1.0.15 RedPointText属性支持手动修改
 //1.0.16 RedPoint支持tag
+//1.0.17 暴露接口
 publish{
     userOrg = 'loganpluo' // Bintray 账号名
     groupId = 'com.github.redpointtree'
     artifactId = 'redpointtree'
-    publishVersion = '1.0.16'
+    publishVersion = '1.0.17'
     desc = 'This is redpointtree for anroid'
     website = 'https://github.com/loganpluo/RedpointTree'
 }
