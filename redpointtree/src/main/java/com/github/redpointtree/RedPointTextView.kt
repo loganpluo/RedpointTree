@@ -85,7 +85,7 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
         val root = redpointTree?.findRedPointById(redPointId!!)
         root?.apply {
             addObserver(redPointObserver)
-            LogUtil.d(tag,"onAttachedToWindow addObserver:$redPointObserver, and invalidateSelf")
+            LogUtil.d(TAG,"onAttachedToWindow addObserver:$redPointObserver, and invalidateSelf")
         }?.invalidateSelf()
     }
 
@@ -100,7 +100,7 @@ class RedPointTextView(context: Context, attrs: AttributeSet?, defStyleAttr: Int
         val root = redpointTree?.findRedPointById(redPointId!!)
         root?.apply {
             removeObserver(redPointObserver)
-            LogUtil.d(tag,"onDetachedFromWindow removeObserver:$redPointObserver")
+            LogUtil.d(TAG,"onDetachedFromWindow removeObserver:$redPointObserver")
         }
     }
 

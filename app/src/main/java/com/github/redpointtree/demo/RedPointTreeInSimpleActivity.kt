@@ -2,15 +2,17 @@ package com.github.redpointtree.demo
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import com.github.redpointtree.RedPoint
 import com.github.redpointtree.RedPointGroup
 import com.github.redpointtree.RedPointObserver
+import com.github.redpointtree.RedpointTree
 import kotlinx.android.synthetic.main.activity_redpoint_tree_in_simpleactivity.*
 
 class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
-    val tag = "MainActivity|RedpointTree"
+    val tag = "RedPointTreeInSimple"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
                 }
             }
         })
+        level11.tag = "chat"
         level1_1_text.setOnClickListener {
             level11.invalidate(0)
         }
@@ -65,6 +68,7 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
                 }
             }
         })
+        level12.tag = "chat"
         level1_2_text.setOnClickListener {
             level12.invalidate(0)
         }
@@ -80,6 +84,9 @@ class RedPointTreeInSimpleActivity : AppCompatActivity() {
 
         //viewtree怎么刷新，会存在多次刷新吗
 
+
+        val findTagRedpoint = RedpointTree.findRedPointByTag("chat",root)
+        Log.d(tag,"testRedPointTreeInSimpleActivity findTagRedpoint:$findTagRedpoint")
 
     }
 }

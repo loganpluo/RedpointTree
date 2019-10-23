@@ -27,8 +27,9 @@ open class RedPoint(tid:String) {
     private var mDispatchingValue: Boolean = false
     private var mDispatchInvalidated: Boolean = false
 
-    protected open var tag = "RedPoint"
+    var TAG = "RedPoint"
 
+    var tag:String? = null
 
     init {
         setId(tid)
@@ -69,7 +70,7 @@ open class RedPoint(tid:String) {
         if(this.unReadCount != unReadCount){
             this.unReadCount = unReadCount
             version++
-            LogUtil.i(tag,"setUnReadCount id:$id, setUnReadCount($unReadCount:Int) ")
+            LogUtil.i(TAG,"setUnReadCount id:$id, setUnReadCount($unReadCount:Int) ")
         }
 
     }
@@ -168,13 +169,13 @@ open class RedPoint(tid:String) {
 
         //不需要写缓存,比如切换游客态的时候
         if(!needWriteCache && (observer.redPointObserver is RedPointWriteCacheObserver)){
-            LogUtil.i(tag,"considerNotify id:$id,  not  needWriteCache")
+            LogUtil.i(TAG,"considerNotify id:$id,  not  needWriteCache")
             return
         }
 
         observer.lastVersion = version
 
-        LogUtil.i(tag,"considerNotify id:$id, unReadCount:$unReadCount, ${observer.redPointObserver}")
+        LogUtil.i(TAG,"considerNotify id:$id, unReadCount:$unReadCount, ${observer.redPointObserver}")
         observer.redPointObserver.notify(unReadCount)
     }
 
