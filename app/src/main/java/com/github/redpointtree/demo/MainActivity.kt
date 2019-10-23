@@ -3,6 +3,7 @@ package com.github.redpointtree.demo
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.github.redpointtree.RedPointTextView
 import com.github.redpointtree.RedPointTreeCenter
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity,CrossHierarchyActivity::class.java)
             startActivity(intent)
         }
+
+        RedPointTextView(this).treeName = ""
+
     }
 
 
