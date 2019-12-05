@@ -16,7 +16,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         RedPointTreeCenter.getInstance().put(this, R.string.messagebox_tree, R.xml.messagebox)
-
+//        RedPointTreeCenter.getInstance().getRedPointTree(resources.getString(R.string.messagebox_tree))
+//                ?.findRedPointById(R.string.messagebox_system)?.setIsMuteToParent(true)
+//        RedPointTreeCenter.getInstance().getRedPointTree(resources.getString(R.string.messagebox_tree))
+//                ?.findRedPointById(R.string.messagebox_moment)?.isMuteToParent = true
         gotoRedPointTreeInSimpleActivity.setOnClickListener {
             val intent = Intent(this@MainActivity,RedPointTreeInSimpleActivity::class.java)
             startActivity(intent)

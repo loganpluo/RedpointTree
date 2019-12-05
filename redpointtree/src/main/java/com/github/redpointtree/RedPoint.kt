@@ -27,6 +27,8 @@ open class RedPoint(tid:String) {
     private var mDispatchingValue: Boolean = false
     private var mDispatchInvalidated: Boolean = false
 
+    private var isMuteToParent = false//对父亲节点是不是忽略，不参与红点计算，为了支持会话里面的静音功能
+
     var TAG = "RedPoint"
 
     var tag:String? = null
@@ -43,7 +45,13 @@ open class RedPoint(tid:String) {
         return id
     }
 
+    open fun setIsMuteToParent(isMuteToParent:Boolean){
+        this.isMuteToParent = isMuteToParent
+    }
 
+    open fun isMuteToParent():Boolean{
+        return isMuteToParent
+    }
 
     fun getCacheKey():String{
         if(TextUtils.isEmpty(id)) return ""

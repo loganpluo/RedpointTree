@@ -144,6 +144,10 @@ open class RedPointGroup(id:String) : RedPoint(id) {
             return totalUnReadCountCopy
         }
 
+        if(redPoint.isMuteToParent()){
+            return 0
+        }
+
         return redPoint.getUnReadCount()
     }
 
