@@ -133,6 +133,10 @@ open class RedPoint(tid:String) {
 
     open fun invalidateParent(needWriteCache:Boolean){
         //通知parent也更新关联的红点view
+        if(isMuteToParent){
+            LogUtil.d(TAG,"invalidateParent cuurent point:$this, is isMuteToParent")
+            return
+        }
         parent?.invalidateParent(needWriteCache)
     }
 
