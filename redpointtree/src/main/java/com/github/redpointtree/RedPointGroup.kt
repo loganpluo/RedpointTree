@@ -8,13 +8,13 @@ import com.github.redpointtree.util.LogUtil
  */
 open class RedPointGroup(id:String) : RedPoint(id) {
 
-    private var childrenList = ArrayList<RedPoint>()
+    var childrenList = ArrayList<RedPoint>()
 
     fun getChildren():List<RedPoint>{
         return childrenList
     }
 
-    override var tag: String = "RedPointGroup"
+    var LOG_TAG: String = "RedPointGroup"
 
     /**
      * add 并不会执行刷新view
@@ -22,7 +22,7 @@ open class RedPointGroup(id:String) : RedPoint(id) {
     fun addChild(redPoint: RedPoint):Boolean{
 
         if(TextUtils.isEmpty(redPoint.getId())){
-            LogUtil.e(tag,"addChild fail, redPoint.getId is empty")
+            LogUtil.e(LOG_TAG,"addChild fail, redPoint.getId is empty")
             return false
         }
 
@@ -142,6 +142,10 @@ open class RedPointGroup(id:String) : RedPoint(id) {
             }
 
             return totalUnReadCountCopy
+        }
+
+        if(redPoint.isMuteToParent()){
+            return 0
         }
 
         return redPoint.getUnReadCount()

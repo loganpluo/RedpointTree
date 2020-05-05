@@ -27,8 +27,11 @@ open class RedPoint(tid:String) {
     private var mDispatchingValue: Boolean = false
     private var mDispatchInvalidated: Boolean = false
 
-    protected open var tag = "RedPoint"
+    private var isMuteToParent = false//对父亲节点是不是忽略，不参与红点计算，为了支持会话里面的静音功能
 
+    var TAG = "RedPoint"
+
+    var tag:String? = null
 
     init {
         setId(tid)
@@ -42,7 +45,13 @@ open class RedPoint(tid:String) {
         return id
     }
 
+    open fun setIsMuteToParent(isMuteToParent:Boolean){
+        this.isMuteToParent = isMuteToParent
+    }
 
+    open fun isMuteToParent():Boolean{
+        return isMuteToParent
+    }
 
     fun getCacheKey():String{
         if(TextUtils.isEmpty(id)) return ""
@@ -69,7 +78,7 @@ open class RedPoint(tid:String) {
         if(this.unReadCount != unReadCount){
             this.unReadCount = unReadCount
             version++
-            LogUtil.i(tag,"setUnReadCount id:$id, setUnReadCount($unReadCount:Int) ")
+            LogUtil.i(TAG,"setUnReadCount id:$id, setUnReadCount($unReadCount:Int) ")
         }
 
     }
@@ -118,20 +127,24 @@ open class RedPoint(tid:String) {
         notifyObservers(needWriteCache)
     }
 
-    open internal fun invalidateParent(){
+    open fun invalidateParent(){
         invalidateParent(true)
     }
 
-    open internal fun invalidateParent(needWriteCache:Boolean){
+    open fun invalidateParent(needWriteCache:Boolean){
         //通知parent也更新关联的红点view
+        if(isMuteToParent){
+            LogUtil.d(TAG,"invalidateParent cuurent point:$this, is isMuteToParent")
+            return
+        }
         parent?.invalidateParent(needWriteCache)
     }
 
-    open internal fun invalidateChildren(){
+    open fun invalidateChildren(){
         invalidateChildren(true)
     }
 
-    open internal fun invalidateChildren(needWriteCache:Boolean){
+    open fun invalidateChildren(needWriteCache:Boolean){
         invalidateSelf(needWriteCache)
     }
 
@@ -168,13 +181,13 @@ open class RedPoint(tid:String) {
 
         //不需要写缓存,比如切换游客态的时候
         if(!needWriteCache && (observer.redPointObserver is RedPointWriteCacheObserver)){
-            LogUtil.i(tag,"considerNotify id:$id,  not  needWriteCache")
+            LogUtil.i(TAG,"considerNotify id:$id,  not  needWriteCache")
             return
         }
 
         observer.lastVersion = version
 
-        LogUtil.i(tag,"considerNotify id:$id, unReadCount:$unReadCount, ${observer.redPointObserver}")
+        LogUtil.i(TAG,"considerNotify id:$id, unReadCount:$unReadCount, ${observer.redPointObserver}")
         observer.redPointObserver.notify(unReadCount)
     }
 

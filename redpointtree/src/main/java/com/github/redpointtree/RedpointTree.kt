@@ -24,6 +24,29 @@ class RedpointTree(ctx: Context, val name:String, @XmlRes val xml:Int, defaultLo
     private val redPointClearIntentMap = HashMap<String,RedPoint>()
     private val redPointClearUrlMap = HashMap<String,RedPoint>()
 
+    companion object{
+        fun findRedPointByTag(tag:String, redPoint: RedPoint):List<RedPoint>{
+
+            val findTagRedPointList = ArrayList<RedPoint>()
+            findRedPointByTag(tag,redPoint,findTagRedPointList)
+
+            return findTagRedPointList
+        }
+
+        private fun findRedPointByTag(tag:String, redPoint: RedPoint, list:MutableList<RedPoint>){
+
+            if(redPoint.tag == tag){
+                list.add(redPoint)
+            }
+            if(redPoint is RedPointGroup){
+                redPoint.childrenList.forEach {
+                    findRedPointByTag(tag, it, list)
+                }
+            }
+
+        }
+    }
+
     init {
         rootRedPoint = parseXml(context, xml, defaultLoadCache)
     }

@@ -17,7 +17,6 @@ import java.util.WeakHashMap;
  *
  * @param <K> Key type
  * @param <V> Value type
- * @hide
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
@@ -143,7 +142,6 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
      * return an iterator with additions.
      */
     public IteratorWithAdditions iteratorWithAdditions() {
-        @SuppressWarnings("unchecked")
         IteratorWithAdditions iterator = new IteratorWithAdditions();
         mIterators.put(iterator, false);
         return iterator;
